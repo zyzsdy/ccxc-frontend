@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <TopNavbar activeIndex="home"/>
+    <TopNavbar activeIndex="/"/>
     <div>
       <h1>主页</h1>
       <p>测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。测试文本，一些测试文本，测试。</p>
@@ -27,14 +27,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 // @ is an alias to /src
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import TopNavbar from '@/components/TopNavbar.vue'
 
-export default {
-  name: 'Home',
-  components: {
-    TopNavbar
-  }
+@Component({
+    components: {
+        TopNavbar
+    }
+})
+export default class HomeView extends Vue {
+
 }
 </script>

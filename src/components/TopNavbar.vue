@@ -1,11 +1,19 @@
 <template>
-  <header class="topnavbar">
-    <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F789D4">
-      <el-menu-item index="home">主页</el-menu-item>
-      <el-menu-item>登录</el-menu-item>
-      <el-menu-item>注册</el-menu-item>
-    </el-menu>
-  </header>
+  <el-header class="topnavbar">
+    <el-row type="flex">
+      <el-col>
+            <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="left-menu" :router="true">
+                  <el-menu-item index="/">CCBC X</el-menu-item>
+            </el-menu>
+      </el-col>
+      <el-col>
+            <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
+                  <el-menu-item>登录</el-menu-item>
+                  <el-menu-item index="/reg">注册</el-menu-item>
+            </el-menu>
+      </el-col>
+    </el-row>
+  </el-header>
 </template>
 
 <script lang="ts">
@@ -25,5 +33,14 @@ export default class TopNavbar extends Vue {
   position: fixed;
   top: 0;
   background-color: #555555;
+}
+.el-menu.el-menu--horizontal{
+  border-bottom: none;
+}
+.right-menu{
+  float: right;
+}
+.left-menu{
+  float: left;
 }
 </style>

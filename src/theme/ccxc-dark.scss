@@ -1,18 +1,39 @@
 /* 改变主题色变量 */
-$--color-primary: #C5459C;
+$--color-primary: #F561A4;
 $--background-color-base: #CDCDCD;
-$--color-white: #FFFFFF;
+$--color-white: #555555;
 $--color-success: #6DCC8E;
 $--color-warning: #F9B074;
 $--color-danger: #FF7171;
 $--color-info: #5ABDD0;
 $--color-text-primary: #000000;
-$--color-text-secondary: #70607E;
-$--color-text-regular: #43274B;
-$--color-text-placeholder: #D1C0D2;
+$--color-text-secondary: #ffdfec;
+$--color-text-regular: #f0f0f0;
+$--color-text-placeholder: #8E888F;
 $--color-black: #393939;
 
+$--border-color-base: #5C5C5C;
+$--border-color-light: #878A8F;
+$--border-color-lighter: #A2A7B4;
+$--border-color-extra-light: #EAEAEA;
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 @import "~element-ui/packages/theme-chalk/src/index";
+
+/* 覆盖按钮文字颜色设置 */
+.el-button--primary{
+    color: #FFFFFF;
+}
+.el-button--success{
+    color: #FFFFFF;
+}
+.el-button--info{
+    color: #FFFFFF;
+}
+.el-button--warning{
+    color: #FFFFFF;
+}
+.el-button--danger{
+    color: #FFFFFF;
+}
