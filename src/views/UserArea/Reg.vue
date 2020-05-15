@@ -8,16 +8,16 @@
                     <h1 class="line-title">用户注册</h1>
                     <el-form :model="user" :rules="rules" ref="regForm" label-width="100px">
                         <el-form-item label="用户名" prop="username" required>
-                            <el-input v-model="user.username"></el-input>
+                            <el-input v-model="user.username" placeholder="填写登录名，注册后无法修改"></el-input>
                         </el-form-item>
                         <el-form-item label="E-mail" prop="email" required>
-                            <el-input v-model="user.email"></el-input>
+                            <el-input v-model="user.email" placeholder="请填写有效的电子邮箱地址，便于主办方联系你"></el-input>
                         </el-form-item>
                         <el-form-item label="密码" prop="password" required>
-                            <el-input v-model="user.password" type="password" autocomplete="off" show-password></el-input>
+                            <el-input v-model="user.password" type="password" autocomplete="off" show-password placeholder="请输入密码"></el-input>
                         </el-form-item>
                         <el-form-item label="确认密码" prop="checkPass" required>
-                            <el-input v-model="user.checkPass" type="password" autocomplete="off" show-password></el-input>
+                            <el-input v-model="user.checkPass" type="password" autocomplete="off" show-password placeholder="请再次输入密码"></el-input>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="submitForm()">提交</el-button>
@@ -34,6 +34,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import TopNavbar from '@/components/TopNavbar.vue'
+import { passHash } from '@/utils/crypt'
+import { fetchPost } from '@/utils/fetchPost'
 
 @Component({
     components: {
@@ -63,7 +65,11 @@ export default class RegView extends Vue {
     submitForm(){
         (this.$refs["regForm"] as HTMLFormElement).validate((valid: boolean) => {
             if (valid) {
+                let username = this.user.username;
+                let email = this.user.email;
+                let pass = passHash(this.user.password);
 
+                let api = this.$gConst.apiRoot + "/user-reg";
             }else{
                 return false;
             }
