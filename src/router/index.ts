@@ -13,7 +13,12 @@ Vue.use(VueRouter)
   {
     path: '/reg',
     name: 'Reg',
-    component: () => import(/* webpackChunkName: "about" */ '../views/UserArea/Reg.vue')
+    component: () => import(/* webpackChunkName: "userGaction" */ '../views/UserArea/Reg.vue')
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "userGaction" */ '../views/UserArea/Login.vue')
   }
 ]
 

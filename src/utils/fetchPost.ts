@@ -27,3 +27,18 @@ export function fetchPostWithSign(url: string, data: any) {
         body: dataBody
     });
 }
+
+export function defaultApiErrorAction(context: Vue, data: any) {
+    if(data['status'] == 2){
+        context.$gConst.globalBus.$emit("show-error", data['message']);
+    }
+    else if(data['status'] == 3){
+        context.$gConst.globalBus.$emit("redirect-location", {
+            message: data['message'],
+            location: data['location']
+        });
+    }
+    else if(data['status'] == 4){
+        context.$gConst.globalBus.$emit("log-out", data['message']);
+    }
+}

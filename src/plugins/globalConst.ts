@@ -8,14 +8,15 @@ declare interface globalConst {
   
 declare module 'vue/types/vue' {
     interface Vue{
-        $gConst: globalConst
+        $gConst: globalConst;
+        $message: any;
     }
 }
 
 class GlobalConst implements PluginObject<never>{
     install(vue: typeof Vue): void{
         vue.prototype.$gConst = {
-            apiRoot: "http://localhost:52412/api/v1",
+            apiRoot: "https://localhost/api/v1",
             globalBus: new Vue()
         }
     }

@@ -35,7 +35,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import TopNavbar from '@/components/TopNavbar.vue'
 import { passHash } from '@/utils/crypt'
-import { fetchPost } from '@/utils/fetchPost'
+import { fetchPost, defaultApiErrorAction } from '@/utils/fetchPost'
 
 @Component({
     components: {
@@ -63,13 +63,29 @@ export default class RegView extends Vue {
         }, trigger: "blur"}],
     }
     submitForm(){
-        (this.$refs["regForm"] as HTMLFormElement).validate((valid: boolean) => {
+        (this.$refs["regForm"] as HTMLFormElement).validate(async (valid: boolean) => {
             if (valid) {
                 let username = this.user.username;
                 let email = this.user.email;
                 let pass = passHash(this.user.password);
 
                 let api = this.$gConst.apiRoot + "/user-reg";
+                let res = await fetchPost(api, {
+                    username,
+                    email,
+                    pass
+                });
+                let data = await res.json();
+
+                if(data['status'] == 1){
+                    this.$message({
+                        message: "注册成功",
+                        type: "success"
+                    });
+                    this.$router.push('/login');
+                }else{
+                    defaultApiErrorAction(this, data);
+                }
             }else{
                 return false;
             }

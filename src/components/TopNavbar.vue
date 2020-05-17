@@ -8,7 +8,7 @@
       </el-col>
       <el-col>
             <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
-                  <el-menu-item>登录</el-menu-item>
+                  <el-menu-item index="/login">登录</el-menu-item>
                   <el-menu-item index="/reg">注册</el-menu-item>
             </el-menu>
       </el-col>
@@ -33,6 +33,7 @@ export default class TopNavbar extends Vue {
   position: fixed;
   top: 0;
   background-color: #555555;
+  z-index: 100;
 }
 .el-menu.el-menu--horizontal{
   border-bottom: none;

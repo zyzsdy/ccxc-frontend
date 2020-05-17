@@ -7,6 +7,6 @@ export function hmacSha1(content: string, key: string) {
         .toString('base64');
 }
 
-export function passHash(pass: string){
+export function passHash(pass: string) {
     return hmacSha1(pass, "ccxcccxc-ccxcccxc");
 }
