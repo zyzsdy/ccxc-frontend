@@ -39,6 +39,9 @@ export function defaultApiErrorAction(context: Vue, data: any) {
         });
     }
     else if(data['status'] == 4){
-        context.$gConst.globalBus.$emit("log-out", data['message']);
+        context.$gConst.globalBus.$emit("log-out", {
+            type: "error",
+            message: data['message']
+        });
     }
 }

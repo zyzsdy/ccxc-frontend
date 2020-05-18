@@ -7,10 +7,23 @@
             </el-menu>
       </el-col>
       <el-col>
+        <template v-if="isLogin">
+            <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
+                <el-submenu index="/userarea">
+                  <template slot="title">{{ username }}</template>
+                  <el-menu-item index="/myprofile">个人中心</el-menu-item>
+                  <el-menu-item index="/repass">修改密码</el-menu-item>
+                  <el-menu-item @click="logout">注销</el-menu-item>
+                </el-submenu>
+            </el-menu>
+        </template>
+        <template v-else>
+
             <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
                   <el-menu-item index="/login">登录</el-menu-item>
                   <el-menu-item index="/reg">注册</el-menu-item>
             </el-menu>
+        </template>
       </el-col>
     </el-row>
   </el-header>
@@ -22,6 +35,21 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component
 export default class TopNavbar extends Vue {
     @Prop() private activeIndex!: string
+
+    get isLogin(){
+      return localStorage.getItem("token") !== null;
+    }
+
+    get username(){
+      return localStorage.getItem("username") || "[空名称][NULL]";
+    }
+
+    logout(){
+      this.$gConst.globalBus.$emit("log-out", {
+            type: "success",
+            message: "成功注销"
+      });
+    }
 }
 </script>
 
