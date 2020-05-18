@@ -37,3 +37,24 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-button--danger{
     color: #FFFFFF;
 }
+
+.el-button--primary:hover{
+    color: #FFFFFF;
+}
+.el-button--success:hover{
+    color: #FFFFFF;
+}
+.el-button--info:hover{
+    color: #FFFFFF;
+}
+.el-button--warning:hover{
+    color: #FFFFFF;
+}
+.el-button--danger:hover{
+    color: #FFFFFF;
+}
+
+/* 覆盖不合理的颜色设置 */
+.el-message-box__title{
+    color: #ffdfec;
+}

@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 module.exports = {
+    filenameHashing: true,
     devServer: {
         host: "local.minyami.net",
         https: true,

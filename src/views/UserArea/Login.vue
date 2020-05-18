@@ -6,7 +6,7 @@
             <el-row>
                 <el-col :span="8" :offset="8">
                     <h1 class="line-title">登录</h1>
-                    <el-form :model="user" :rules="rules" ref="loginForm" label-width="100px" hide-required-asterisk="true">
+                    <el-form :model="user" :rules="rules" ref="loginForm" label-width="100px" :hide-required-asterisk="true">
                         <el-form-item label="用户名" prop="username">
                             <el-input v-model="user.username"></el-input>
                         </el-form-item>

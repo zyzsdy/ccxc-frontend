@@ -11,18 +11,21 @@ export function fetchPost(url: string, data: object){
     });
 }
 
-export function fetchPostWithSign(url: string, data: any) {
-    data['ts'] = Date.now();
-    let unsignedString = Object.keys(data).sort().reduce((unsigned, i) => unsigned += i + data[i], "");
+export function fetchPostWithSign(url: string, data: object) {
+    let token = localStorage.getItem("token") || "";
+    let ts = Date.now();
+    let dataBody = JSON.stringify(data);
+
+    let unsignedString = `token=${token}&ts=${ts}&bodyString=${dataBody}`;
     let sk = localStorage.getItem("sk") || "";
     let sign = hmacSha1(unsignedString, sk);
-    data['sign'] = sign;
 
-    let dataBody = JSON.stringify(data);
     return fetch(url, {
         method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "User-Token" : token,
+            "X-Auth-Token": `Ccxc-Auth ${ts} ${sign}`
         },
         body: dataBody
     });

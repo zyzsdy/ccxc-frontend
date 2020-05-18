@@ -31,8 +31,9 @@ export default class App extends Vue {
       localStorage.removeItem("roleid");
       localStorage.removeItem("token");
       localStorage.removeItem("sk");
-      this.$message(data);
+      this.$alert(data.message, "您的登录已经注销");
       this.reload();
+      this.$router.push("/login");
     });
   }
 

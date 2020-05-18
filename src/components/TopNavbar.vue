@@ -31,6 +31,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
 
 @Component
 export default class TopNavbar extends Vue {
@@ -44,11 +45,19 @@ export default class TopNavbar extends Vue {
       return localStorage.getItem("username") || "[空名称][NULL]";
     }
 
-    logout(){
-      this.$gConst.globalBus.$emit("log-out", {
-            type: "success",
-            message: "成功注销"
-      });
+    async logout(){
+      let api = this.$gConst.apiRoot + "/user-logout";
+      let res = await fetchPostWithSign(api, {});
+      let data = await res.json();
+
+      if(data['status'] == 1){
+        this.$gConst.globalBus.$emit("log-out", {
+              type: "success",
+              message: "成功注销"
+        });
+      }else{
+        defaultApiErrorAction(this, data);
+      }
     }
 }
 </script>
