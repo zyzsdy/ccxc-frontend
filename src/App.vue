@@ -25,13 +25,15 @@ export default class App extends Vue {
       });
       this.$router.push(data.location);
     });
-    this.$gConst.globalBus.$on("log-out", (data: {message: string, type: string}) => {
+    this.$gConst.globalBus.$on("log-out", (data: {message: string, type: "error" | "success" | "warning" | "info" | undefined}) => {
       localStorage.removeItem("uid");
       localStorage.removeItem("username");
       localStorage.removeItem("roleid");
       localStorage.removeItem("token");
       localStorage.removeItem("sk");
-      this.$alert(data.message, "您的登录已经注销");
+      this.$alert(data.message, "您的登录已经注销", {
+        type: data.type
+      });
       this.reload();
       this.$router.push("/login");
     });

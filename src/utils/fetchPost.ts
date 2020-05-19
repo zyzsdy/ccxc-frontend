@@ -1,17 +1,25 @@
 import { hmacSha1 } from './crypt'
+import { Message } from 'element-ui';
 
-export function fetchPost(url: string, data: object){
+export async function fetchPost(url: string, data: object){
     let dataBody = JSON.stringify(data);
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: dataBody
-    });
+    try {
+        let r = await fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: dataBody
+        });
+        return r;
+    }
+    catch (error) {
+        Message.error("服务器通信异常");
+        throw error;
+    }
 }
 
-export function fetchPostWithSign(url: string, data: object) {
+export async function fetchPostWithSign(url: string, data: object) {
     let token = localStorage.getItem("token") || "";
     let ts = Date.now();
     let dataBody = JSON.stringify(data);
@@ -20,15 +28,22 @@ export function fetchPostWithSign(url: string, data: object) {
     let sk = localStorage.getItem("sk") || "";
     let sign = hmacSha1(unsignedString, sk);
 
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json",
-            "User-Token" : token,
-            "X-Auth-Token": `Ccxc-Auth ${ts} ${sign}`
-        },
-        body: dataBody
-    });
+    try {
+        let r = await fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "User-Token" : token,
+                "X-Auth-Token": `Ccxc-Auth ${ts} ${sign}`
+            },
+            body: dataBody
+        });
+        return r;
+    } catch (error) {
+        Message.error("服务器通信异常");
+        throw error;
+    }
+
 }
 
 export function defaultApiErrorAction(context: Vue, data: any) {

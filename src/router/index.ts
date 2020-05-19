@@ -19,6 +19,11 @@ Vue.use(VueRouter)
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/Login.vue')
+  },
+  {
+    path: '/repass',
+    name: 'RePass',
+    component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/RePass.vue')
   }
 ]
 

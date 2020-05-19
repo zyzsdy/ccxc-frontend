@@ -75,6 +75,7 @@ export default class RegView extends Vue {
                     email,
                     pass
                 });
+
                 let data = await res.json();
 
                 if(data['status'] == 1){

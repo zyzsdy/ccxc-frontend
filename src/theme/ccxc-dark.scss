@@ -19,42 +19,16 @@ $--border-color-extra-light: #EAEAEA;
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
-@import "~element-ui/packages/theme-chalk/src/index";
-
 /* 覆盖按钮文字颜色设置 */
-.el-button--primary{
-    color: #FFFFFF;
-}
-.el-button--success{
-    color: #FFFFFF;
-}
-.el-button--info{
-    color: #FFFFFF;
-}
-.el-button--warning{
-    color: #FFFFFF;
-}
-.el-button--danger{
-    color: #FFFFFF;
-}
+$--button-default-font-color: #FFFFFF;
+$--button-primary-font-color: #FFFFFF;
+$--button-success-font-color: #FFFFFF;
+$--button-warning-font-color: #FFFFFF;
+$--button-danger-font-color: #FFFFFF;
+$--button-info-font-color: #FFFFFF;
 
-.el-button--primary:hover{
-    color: #FFFFFF;
-}
-.el-button--success:hover{
-    color: #FFFFFF;
-}
-.el-button--info:hover{
-    color: #FFFFFF;
-}
-.el-button--warning:hover{
-    color: #FFFFFF;
-}
-.el-button--danger:hover{
-    color: #FFFFFF;
-}
+/* 覆盖MessageBox文字颜色设置 */
+$--messagebox-title-color: #FFFFFF;
+$--messagebox-content-color: #FFFFFF;
 
-/* 覆盖不合理的颜色设置 */
-.el-message-box__title{
-    color: #ffdfec;
-}
+@import "~element-ui/packages/theme-chalk/src/index";

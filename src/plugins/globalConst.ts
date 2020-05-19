@@ -9,8 +9,6 @@ declare interface globalConst {
 declare module 'vue/types/vue' {
     interface Vue{
         $gConst: globalConst;
-        $message: any;
-        $alert: any;
     }
 }
 
