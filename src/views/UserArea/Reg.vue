@@ -4,11 +4,11 @@
     <el-container>
         <el-main>
             <el-row>
-                <el-col :span="8" :offset="8">
+                <el-col :md="{span: 8, offset: 8}" :xs="24">
                     <h1 class="line-title">用户注册</h1>
                     <el-form :model="user" :rules="rules" ref="regForm" label-width="100px">
                         <el-form-item label="用户名" prop="username" required>
-                            <el-input v-model="user.username" placeholder="填写登录名，注册后无法修改"></el-input>
+                            <el-input v-model="user.username" placeholder="填写登录名，注册后无法修改，可以为中文"></el-input>
                         </el-form-item>
                         <el-form-item label="E-mail" prop="email" required>
                             <el-input v-model="user.email" placeholder="请填写有效的电子邮箱地址，便于主办方联系你"></el-input>
@@ -94,6 +94,12 @@ export default class RegView extends Vue {
     }
     resetForm(){
         (this.$refs["regForm"] as HTMLFormElement).resetFields();
+    }
+    mounted(){
+        if(localStorage.getItem("token") != null){
+            this.$gConst.globalBus.$emit("show-error", "您已登录。");
+            this.$router.push("/");
+        }
     }
 }
 

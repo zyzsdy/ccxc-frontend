@@ -4,7 +4,7 @@
     <el-container>
         <el-main>
             <el-row>
-                <el-col :span="8" :offset="8">
+                <el-col :md="{span: 8, offset: 8}" :xs="24">
                     <h1 class="line-title">登录</h1>
                     <el-form :model="user" :rules="rules" ref="loginForm" label-width="100px" :hide-required-asterisk="true">
                         <el-form-item label="用户名" prop="username">
@@ -73,6 +73,12 @@ export default class LoginView extends Vue {
                 return false;
             }
         })
+    }
+    mounted(){
+        if(localStorage.getItem("token") != null){
+            this.$gConst.globalBus.$emit("show-error", "您已登录。");
+            this.$router.push("/");
+        }
     }
 }
 

@@ -4,7 +4,7 @@
     <el-container>
         <el-main>
             <el-row>
-                <el-col :span="8" :offset="8">
+                <el-col :md="{span: 8, offset: 8}" :xs="24">
                     <h1 class="line-title">修改密码</h1>
                     <el-form :model="repassData" :rules="rules" ref="repassForm" label-width="100px" :hide-required-asterisk="true">
                         <el-form-item label="原密码" prop="oldPassword" required>

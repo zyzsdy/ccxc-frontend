@@ -24,6 +24,11 @@ Vue.use(VueRouter)
     path: '/repass',
     name: 'RePass',
     component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/RePass.vue')
+  },
+  {
+    path: '/myprofile',
+    name: 'MyProfile',
+    component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/MyProfile.vue')
   }
 ]
 
