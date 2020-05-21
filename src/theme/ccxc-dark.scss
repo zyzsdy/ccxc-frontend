@@ -34,4 +34,21 @@ $--messagebox-content-color: #FFFFFF;
 /* 工具提示颜色设置 */
 $--tooltip-color: #FFFFFF;
 
+/* 覆盖表格颜色设置 */
+$--table-font-color: #FFFFFF;
+$--table-header-font-color: #FFFFFF;
+$--table-row-hover-background-color: #3d3d3d;
+$--table-header-background-color: #555555;
+
 @import "~element-ui/packages/theme-chalk/src/index";
+
+/* 重新定义对话框样式 */
+.el-dialog{
+    background-color: #252525;
+    .el-dialog__title{
+        color: #FFFFFF;
+    }
+}
+.el-table tr{
+    background-color: #252525;
+}

@@ -37,6 +37,9 @@ export default class App extends Vue {
       this.reload();
       this.$router.push("/login");
     });
+    this.$gConst.globalBus.$on("reload", () => {
+      this.reload();
+    });
   }
 
   reload(){
