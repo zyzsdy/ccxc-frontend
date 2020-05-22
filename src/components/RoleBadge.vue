@@ -27,6 +27,7 @@ export default class RoleBadge extends Vue{
     padding: 2px 5px;
     border-radius: 5px;
     margin-left: 5px;
+    font-weight: bold;
 }
 .banned{
     background-color: #888888;

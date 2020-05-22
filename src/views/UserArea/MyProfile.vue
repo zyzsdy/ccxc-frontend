@@ -54,11 +54,31 @@
                         </el-dialog>
                     </div>
                     <div v-else>
-                        <div>队名 {{profileInfo.group_info.groupname}}</div>
-                        <div>简介 {{profileInfo.group_info.profile}}</div>
-                        <div>队伍人数 {{profileInfo.group_info.member_list.length}}</div>
-                        编辑 解散队伍 退出队伍
-                        <el-table :data="profileInfo.group_info.member_list" style="width: 100%">
+                        <h3>队伍信息</h3>
+                        <el-row>
+                            <el-col :sm="24" :md="18" :xl="20">
+                                <el-form :model="profileInfo.group_info" :rules="createNewGroupRules" ref="editGroupForm" :hide-required-asterisk="true" label-width="100px">
+                                    <el-form-item label="队名" prop="groupname" required>
+                                        <el-input v-model="profileInfo.group_info.groupname" :readonly="!isGroupLeader"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="队伍简介">
+                                        <el-input type="textarea" v-model="profileInfo.group_info.profile" :autosize="{minRows: 5, maxRows: 30}" maxlength="350" show-word-limit :readonly="!isGroupLeader"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="队伍人数">
+                                        <span>{{profileInfo.group_info.member_list.length}}</span>
+                                    </el-form-item>
+                                </el-form>
+                            </el-col>
+                            <el-col :sm="24" :md="6" :xl="4" class="group-info-general-operations-box" v-if="isGroupLeader">
+                                <el-button type="warning" icon="el-icon-circle-plus">邀请队员</el-button>
+                                <el-button type="info" icon="el-icon-edit" @click="editGroupInfo()">保存编辑</el-button>
+                                <el-button type="danger" icon="el-icon-error" @click="deleteGroup()">解散组队</el-button>
+                            </el-col>
+                            <el-col :sm="24" :md="6" :xl="4" class="group-info-general-operations-box" v-else>
+                                <el-button type="danger" icon="el-icon-error">退出组队</el-button>
+                            </el-col>
+                        </el-row>
+                        <el-table :data="profileInfo.group_info.member_list" class="group-info-member-table">
                             <el-table-column type="index" label="序号"></el-table-column>
                             <el-table-column label="用户名">
                                 <template slot-scope="u">
@@ -66,9 +86,11 @@
                                     <RoleBadge :roleid="u.row.roleid"></RoleBadge>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
-                                <template>
-                                    移除
+                            <el-table-column label="操作" v-if="isGroupLeader" width="130px">
+                                <template slot-scope="u">
+                                    <el-popconfirm title="确认将该用户从当前队伍中移除吗？" @onConfirm="deleteGroupUser(u.row.uid)">
+                                        <el-button slot="reference" type="danger">移除用户</el-button>
+                                    </el-popconfirm>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -113,6 +135,9 @@ export default class MyProfileView extends Vue {
         }else{
             defaultApiErrorAction(this, data);
         }
+    }
+    get isGroupLeader(){
+        return this.profileInfo.user_info.roleid == 3;
     }
     editUserForm(){
         (this.$refs["editUserForm"] as HTMLFormElement).validate(async (valid: boolean) => {
@@ -172,9 +197,97 @@ export default class MyProfileView extends Vue {
             }
         });
     }
+    editGroupInfo(){
+        if(!this.isGroupLeader){
+            this.$message({
+                type: "error",
+                message: "只有队长才能操作"
+            })
+            return false;
+        }
+
+        (this.$refs["editGroupForm"] as HTMLFormElement).validate(async (valid: boolean) => {
+            if (valid) {
+                let groupname = (this.profileInfo.group_info as GroupInfo).groupname;
+                let profile = (this.profileInfo.group_info as GroupInfo).profile;
+
+                let api = this.$gConst.apiRoot + "/edit-group";
+                let res = await fetchPostWithSign(api, {
+                    groupname,
+                    profile
+                });
+
+                let data = await res.json();
+
+                if(data['status'] == 1){
+                    this.$message({
+                        message: "编辑成功",
+                        type: "success"
+                    });
+                    this.$gConst.globalBus.$emit("reload");
+                }else{
+                    defaultApiErrorAction(this, data);
+                }
+            }else{
+                return false;
+            }
+        });
+    }
     createNewGroupFormReset(){
         (this.$refs["createNewGroupForm"] as HTMLFormElement).resetFields();
         this.newGroupDialogVisible = false;
+    }
+    deleteGroupUser(uid: number){
+        if(!this.isGroupLeader){
+            this.$message({
+                type: "error",
+                message: "只有队长才能操作"
+            })
+            return false;
+        }
+
+        if(uid == this.profileInfo.user_info.uid){
+            this.$message({
+                type: "error",
+                message: "不能删除自己"
+            })
+            return false;
+        }
+
+        console.log("UID: " + uid);
+    }
+    async deleteGroup(){
+        if(!this.isGroupLeader){
+            this.$message({
+                type: "error",
+                message: "只有队长才能操作"
+            })
+            return false;
+        }
+
+        try {
+            await this.$confirm("解散组队后，当前组队中所有成员都将恢复为未报名状态。此操作不能撤销，是否继续？", "操作确认", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+            });
+
+            let api = this.$gConst.apiRoot + "/delete-group";
+            let res = await fetchPostWithSign(api, {});
+            let data = await res.json();
+
+            if(data['status'] == 1){
+                this.$message({
+                    message: "删除成功",
+                    type: "success"
+                });
+                this.$gConst.globalBus.$emit("reload");
+            }else{
+                defaultApiErrorAction(this, data);
+            }
+        } catch (error) {
+            
+        }
     }
 }
 
@@ -253,5 +366,19 @@ export class MyProfileInfo{
 }
 .no-group-box:hover{
     background-color: #313131;
+}
+.group-info-general-operations-box{
+    display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
+    flex-direction: column;
+    .el-button + .el-button{
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+.group-info-member-table{
+    width: 100%;
+    margin-top: 20px;
 }
 </style>
