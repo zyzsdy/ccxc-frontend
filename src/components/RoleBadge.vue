@@ -23,8 +23,7 @@ export default class RoleBadge extends Vue{
     position: absolute;
     font-size: 10px;
     color: #FFFFFF;
-    height: 20px;
-    padding: 2px 5px;
+    padding: 2px 5px 2px 5px;
     border-radius: 5px;
     margin-left: 5px;
     font-weight: bold;

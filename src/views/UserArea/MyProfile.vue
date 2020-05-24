@@ -70,7 +70,17 @@
                                 </el-form>
                             </el-col>
                             <el-col :sm="24" :md="6" :xl="4" class="group-info-general-operations-box" v-if="isGroupLeader">
-                                <el-button type="warning" icon="el-icon-circle-plus">邀请队员</el-button>
+                                <el-popover ref="sendInviteDialog" trigger="click">
+                                    <el-form ref="sendInviteForm" @submit.native.prevent>
+                                        <el-form-item label="选择接收邀请的用户">
+                                            <el-autocomplete v-model="searchUserKeyword" placeholder="键入用户名以开始搜索" :fetch-suggestions="searchNoGroupUser" value-key="username" :trigger-on-focus="true"></el-autocomplete>
+                                        </el-form-item>
+                                        <el-form-item style="text-align: right; margin: 0">
+                                            <el-button type="primary" size="mini" @click="sendInvite()">发送邀请</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </el-popover>
+                                <el-button v-popover:sendInviteDialog type="warning" icon="el-icon-circle-plus">邀请队员</el-button>
                                 <el-button type="info" icon="el-icon-edit" @click="editGroupInfo()">保存编辑</el-button>
                                 <el-button type="danger" icon="el-icon-error" @click="deleteGroup()">解散组队</el-button>
                             </el-col>
@@ -118,6 +128,7 @@ import 'element-ui/lib/theme-chalk/display.css';
 export default class MyProfileView extends Vue {
     profileInfo: MyProfileInfo = new MyProfileInfo({user_info: null, group_info: null});
     createNewGroupInfo: GroupInfo = new GroupInfo();
+    searchUserKeyword: string = "";
     userFormRules = {
         email: [{required: true, message: "E-mail不能为空", trigger: "blur"}]
     }
@@ -237,6 +248,21 @@ export default class MyProfileView extends Vue {
         (this.$refs["createNewGroupForm"] as HTMLFormElement).resetFields();
         this.newGroupDialogVisible = false;
     }
+    async searchNoGroupUser(kw: string, cb: Function){
+        let api = this.$gConst.apiRoot + "/search-no-group-user";
+
+        let res = await fetchPostWithSign(api, {
+            kw_uname: kw
+        });
+
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            cb(data.result);
+        }else{
+            defaultApiErrorAction(this, data);
+        }
+    }
     deleteGroupUser(uid: number){
         if(!this.isGroupLeader){
             this.$message({
@@ -287,6 +313,31 @@ export default class MyProfileView extends Vue {
             }
         } catch (error) {
             
+        }
+    }
+    async sendInvite(){
+        if(!this.isGroupLeader){
+            this.$message({
+                type: "error",
+                message: "只有队长才能操作"
+            })
+            return false;
+        }
+
+        let api = this.$gConst.apiRoot + "/send-invite";
+        let res = await fetchPostWithSign(api, {
+            username: this.searchUserKeyword
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            this.$message({
+                message: "发送邀请成功",
+                type: "success"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        }else{
+            defaultApiErrorAction(this, data);
         }
     }
 }
