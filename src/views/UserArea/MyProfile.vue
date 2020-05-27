@@ -35,6 +35,27 @@
                     <div class="hidden-md-and-up line-title" style="margin-bottom: 20px;"></div>
                     <div v-if="profileInfo.group_info == null">
                         <el-alert title="建立组队或者接受邀请来完成报名。" type="info" :closable="false" show-icon></el-alert>
+
+                        <div v-if="profileInfo.user_info.roleid == 1 && inviteInfoList.length > 0">
+                            <h3>邀请信息</h3>
+                            <el-alert type="info" title="以下为您收到的邀请" description="请注意邀请有效期至报名时间截止，在报名截止后所有邀请会被自动撤销。" :closable="false"></el-alert>
+                            <el-table :data="inviteInfoList" class="group-info-member-table">
+                                <el-table-column label="邀请时间" prop="formatedDate"></el-table-column>
+                                <el-table-column label="队名" prop="from_groupname"></el-table-column>
+                                <el-table-column label="操作" width="260px">
+                                    <template slot-scope="u">
+                                        <el-popconfirm title="确认拒绝该邀请？" @onConfirm="declineInvite(u.row.iid)">
+                                            <el-button slot="reference" type="danger" size="small" plain>拒绝邀请</el-button>
+                                        </el-popconfirm>
+                                        <el-popconfirm title="确认接受该邀请？" @onConfirm="acceptInvite(u.row.iid)">
+                                            <el-button slot="reference" type="success" size="small" style="margin-left: 5px">接受邀请</el-button>
+                                        </el-popconfirm>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+
+
                         <div class="no-group-box" @click="newGroupDialogVisible = true">
                             <span><i class="el-icon-circle-plus-outline"></i> 建立新队伍</span>
                         </div>
@@ -85,7 +106,7 @@
                                 <el-button type="danger" icon="el-icon-error" @click="deleteGroup()">解散组队</el-button>
                             </el-col>
                             <el-col :sm="24" :md="6" :xl="4" class="group-info-general-operations-box" v-else>
-                                <el-button type="danger" icon="el-icon-error">退出组队</el-button>
+                                <el-button type="danger" icon="el-icon-error" @click="exitGroup()">退出组队</el-button>
                             </el-col>
                         </el-row>
                         <el-table :data="profileInfo.group_info.member_list" class="group-info-member-table">
@@ -104,6 +125,22 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <div v-if="profileInfo.user_info.roleid == 3 && inviteInfoList.length > 0">
+                            <h3>邀请信息</h3>
+                            <el-alert type="info" title="已向下列用户发出了邀请但是对方仍未接受，队长可在此查看或撤销邀请。" description="请注意邀请有效期至报名时间截止，在报名截止后所有邀请会被自动撤销。" :closable="false"></el-alert>
+                            <el-table :data="inviteInfoList" class="group-info-member-table">
+                                <el-table-column type="index" label="序号"></el-table-column>
+                                <el-table-column label="邀请时间" prop="formatedDate"></el-table-column>
+                                <el-table-column label="用户名" prop="to_username"></el-table-column>
+                                <el-table-column label="操作" width="130px">
+                                    <template slot-scope="u">
+                                        <el-popconfirm title="确认撤销该邀请？" @onConfirm="deleteInvite(u.row.iid)">
+                                            <el-button slot="reference" type="danger" size="small">撤销邀请</el-button>
+                                        </el-popconfirm>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
                     </div>
                 </el-col>
             </el-row>
@@ -117,6 +154,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import TopNavbar from '@/components/TopNavbar.vue'
 import RoleBadge from '@/components/RoleBadge.vue'
 import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
+import { formatTimestamp } from '@/utils/formatDate'
 import 'element-ui/lib/theme-chalk/display.css';
 
 @Component({
@@ -129,6 +167,7 @@ export default class MyProfileView extends Vue {
     profileInfo: MyProfileInfo = new MyProfileInfo({user_info: null, group_info: null});
     createNewGroupInfo: GroupInfo = new GroupInfo();
     searchUserKeyword: string = "";
+    inviteInfoList: InviteInfo[] = [];
     userFormRules = {
         email: [{required: true, message: "E-mail不能为空", trigger: "blur"}]
     }
@@ -143,8 +182,35 @@ export default class MyProfileView extends Vue {
 
         if(data['status'] == 1){
             this.profileInfo = new MyProfileInfo(data);
+
+            let inviteApi = "";
+            if(this.profileInfo.user_info.roleid == 1){
+                inviteApi = this.$gConst.apiRoot + "/list-my-invite";
+            }
+            else if(this.profileInfo.user_info.roleid == 3){
+                inviteApi = this.$gConst.apiRoot + "/list-sent-invites";
+            }
+
+            if(inviteApi !== ""){
+                let inviteRes = await fetchPostWithSign(inviteApi, {});
+                let inviteData = await inviteRes.json();
+
+                if(inviteData['status'] == 1){
+                    if(inviteData['result'] != null){
+                        for(let inviteItem of inviteData['result']){
+                            let inviteInfoObj = new InviteInfo(inviteItem);
+                            this.inviteInfoList.push(inviteInfoObj);
+                        }
+                    }
+                }
+                else{
+                    defaultApiErrorAction(this, inviteData);
+                }
+            }
+
         }else{
             defaultApiErrorAction(this, data);
+            this.$router.push('/');
         }
     }
     get isGroupLeader(){
@@ -195,11 +261,10 @@ export default class MyProfileView extends Vue {
                 let data = await res.json();
 
                 if(data['status'] == 1){
-                    this.$message({
-                        message: "建立成功",
+                    this.$gConst.globalBus.$emit("log-out", {
+                        message: "您的组队已建立成功，请重新登录以验证您的队长身份。",
                         type: "success"
                     });
-                    this.$gConst.globalBus.$emit("reload");
                 }else{
                     defaultApiErrorAction(this, data);
                 }
@@ -263,7 +328,7 @@ export default class MyProfileView extends Vue {
             defaultApiErrorAction(this, data);
         }
     }
-    deleteGroupUser(uid: number){
+    async deleteGroupUser(uid: number){
         if(!this.isGroupLeader){
             this.$message({
                 type: "error",
@@ -280,7 +345,45 @@ export default class MyProfileView extends Vue {
             return false;
         }
 
-        console.log("UID: " + uid);
+        let api = this.$gConst.apiRoot + "/remove-group-member";
+        let res = await fetchPostWithSign(api, {
+            uid
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            this.$message({
+                message: "删除成功",
+                type: "success"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        }else{
+            defaultApiErrorAction(this, data);
+        }
+    }
+    async exitGroup(){
+        try {
+            await this.$confirm("您将退出组队，恢复未报名用户身份。此操作不能撤销，是否继续？", "操作确认", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+            });
+
+            let api = this.$gConst.apiRoot + "/exit-group";
+            let res = await fetchPostWithSign(api, {});
+            let data = await res.json();
+
+            if(data['status'] == 1){
+                this.$gConst.globalBus.$emit("log-out", {
+                    message: "您已退出组队，恢复未报名状态，请重新登录。",
+                    type: "success"
+                });
+            }else{
+                defaultApiErrorAction(this, data);
+            }
+        } catch (error) {
+            
+        }
     }
     async deleteGroup(){
         if(!this.isGroupLeader){
@@ -303,11 +406,10 @@ export default class MyProfileView extends Vue {
             let data = await res.json();
 
             if(data['status'] == 1){
-                this.$message({
-                    message: "删除成功",
+                this.$gConst.globalBus.$emit("log-out", {
+                    message: "组队已删除，您和所有组队中的成员都已恢复未报名状态，请重新登录。",
                     type: "success"
                 });
-                this.$gConst.globalBus.$emit("reload");
             }else{
                 defaultApiErrorAction(this, data);
             }
@@ -339,6 +441,81 @@ export default class MyProfileView extends Vue {
         }else{
             defaultApiErrorAction(this, data);
         }
+    }
+    async deleteInvite(iid: number){
+        if(!this.isGroupLeader){
+            this.$message({
+                type: "error",
+                message: "只有队长才能操作"
+            })
+            return false;
+        }
+
+        let api = this.$gConst.apiRoot + "/invalidate-invite";
+        let res = await fetchPostWithSign(api, {
+            iid
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            this.$message({
+                message: "撤销邀请成功",
+                type: "success"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        }else{
+            defaultApiErrorAction(this, data);
+        }
+    }
+    async declineInvite(iid: number){
+        let api = this.$gConst.apiRoot + "/decline-invite";
+        let res = await fetchPostWithSign(api, {
+            iid
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            this.$message({
+                message: "邀请已拒绝",
+                type: "success"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        }else{
+            defaultApiErrorAction(this, data);
+        }
+    }
+    async acceptInvite(iid: number){
+        let api = this.$gConst.apiRoot + "/accept-invite";
+        let res = await fetchPostWithSign(api, {
+            iid
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            this.$gConst.globalBus.$emit("log-out", {
+                message: "您以成功加入组队，请重新登录以验证您的组队身份。",
+                type: "success"
+            });
+        }else{
+            defaultApiErrorAction(this, data);
+        }
+    }
+}
+
+export class InviteInfo{
+    iid: number = 0;
+    create_time: number = 0;
+    from_uid: number = 0;
+    to_gid: number = 0;
+    valid: number = 0;
+    to_username: string = "";
+    from_groupname: string = "";
+
+    constructor(obj?: any){
+        if(obj) Object.assign(this, obj);
+    }
+    get formatedDate(){
+        return formatTimestamp(this.create_time);
     }
 }
 
