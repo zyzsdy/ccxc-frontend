@@ -20,3 +20,19 @@ function getTwoDigits(d: number){
     if(d < 10) return '0' + d;
     else return d.toString();
 }
+
+export function formatCountdown(endTimestamp: number){
+    let now = new Date().getTime();
+    let t = endTimestamp - now;
+
+    if(t < 0) return "--:--:--";
+
+    let s = getTwoDigits(Math.floor((t / 1000) % 60));
+    let m = getTwoDigits(Math.floor((t / 60000) % 60));
+    let h = getTwoDigits(Math.floor((t / 3600000) % 24));
+    let d = Math.floor(t / 86400000);
+
+    if(d <= 0) return `${h}:${m}:${s}`;
+
+    return `${d}d ${h}:${m}:${s}`;
+}

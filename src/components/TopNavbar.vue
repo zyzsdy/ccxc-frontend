@@ -4,6 +4,7 @@
       <el-col>
             <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="left-menu" :router="true">
                   <el-menu-item index="/">CCBC X</el-menu-item>
+                  <el-menu-item index="/about">关于CCBC X</el-menu-item>
             </el-menu>
       </el-col>
       <el-col>
