@@ -20,6 +20,9 @@
                             <el-input v-model="user.checkPass" type="password" autocomplete="off" show-password placeholder="请再次输入密码"></el-input>
                         </el-form-item>
                         <el-form-item>
+                            <p>单击提交按钮完成注册即表示您同意我们的<router-link to="/docs/userterms">用户协议</router-link>及<router-link to="/docs/privacypolicy">隐私政策</router-link>。</p>
+                        </el-form-item>
+                        <el-form-item>
                             <el-button type="primary" @click="submitForm()">提交</el-button>
                             <el-button @click="resetForm()">重置</el-button>
                         </el-form-item>

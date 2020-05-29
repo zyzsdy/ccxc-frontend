@@ -14,7 +14,7 @@
                             <el-input v-model="user.password" type="password" autocomplete="off" show-password></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm()">登录</el-button>
+                            <el-button type="primary" @click="submitForm()" :loading="loginloading">登录</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -29,6 +29,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import TopNavbar from '@/components/TopNavbar.vue'
 import { passHash } from '@/utils/crypt'
 import { fetchPost, defaultApiErrorAction } from '@/utils/fetchPost'
+import { GetUserId } from '@/utils/client'
 
 @Component({
     components: {
@@ -37,6 +38,7 @@ import { fetchPost, defaultApiErrorAction } from '@/utils/fetchPost'
 })
 export default class LoginView extends Vue {
     user = new LoginUser();
+    loginloading = false;
     rules = {
         username: [{required: true, message: "用户名不能为空", trigger: "blur"}],
         password: [{required: true, message: "密码不能为空", trigger: "blur"}]
@@ -44,17 +46,21 @@ export default class LoginView extends Vue {
     submitForm(){
         (this.$refs["loginForm"] as HTMLFormElement).validate(async (valid: boolean) => {
             if (valid) {
+                this.loginloading = true;
+                let userid = await GetUserId();
                 let username = this.user.username;
                 let pass = passHash(this.user.password);
 
                 let api = this.$gConst.apiRoot + "/user-login";
                 let res = await fetchPost(api, {
                     username,
-                    pass
+                    pass,
+                    userid
                 });
                 let data = await res.json();
 
                 if(data['status'] == 1){
+                    this.loginloading = false;
                     this.$message({
                         message: "登录成功",
                         type: "success"
@@ -67,6 +73,7 @@ export default class LoginView extends Vue {
                     localStorage.setItem("token", data["user_login_info"]["token"]);
                     localStorage.setItem("sk", data["user_login_info"]["sk"]);
                 }else{
+                    this.loginloading = false;
                     defaultApiErrorAction(this, data);
                 }
             }else{

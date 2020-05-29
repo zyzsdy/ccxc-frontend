@@ -17,6 +17,16 @@ Vue.use(VueRouter)
     component: About
   },
   {
+    path: '/docs/privacypolicy',
+    name: 'PrivacyPolicy',
+    component: () => import(/* webpackChunkName: "docs" */ '../views/Docs/PrivacyPolicy.vue')
+  },
+  {
+    path: '/docs/userterms',
+    name: 'UserTerms',
+    component: () => import(/* webpackChunkName: "docs" */ '../views/Docs/UserTerms.vue')
+  },
+  {
     path: '/reg',
     name: 'Reg',
     component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/Reg.vue')
