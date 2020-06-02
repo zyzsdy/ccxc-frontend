@@ -62,4 +62,10 @@ export function defaultApiErrorAction(context: Vue, data: any) {
             message: data['message']
         });
     }
+    else if(data['status'] == 13){
+        context.$gConst.globalBus.$emit("log-out", {
+            message: data['message'],
+            type: "success"
+        });
+    }
 }

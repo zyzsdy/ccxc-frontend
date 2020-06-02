@@ -7,8 +7,8 @@
                 <el-col :md="{span: 8, offset: 8}" :xs="24">
                     <h1 class="line-title">登录</h1>
                     <el-form :model="user" :rules="rules" ref="loginForm" label-width="100px" :hide-required-asterisk="true"> 
-                        <el-form-item label="用户名" prop="username">
-                            <el-input v-model="user.username"></el-input>
+                        <el-form-item label="E-mail" prop="email">
+                            <el-input v-model="user.email"></el-input>
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
                             <el-input v-model="user.password" type="password" autocomplete="off" show-password></el-input>
@@ -40,7 +40,7 @@ export default class LoginView extends Vue {
     user = new LoginUser();
     loginloading = false;
     rules = {
-        username: [{required: true, message: "用户名不能为空", trigger: "blur"}],
+        email: [{required: true, message: "E-mail不能为空", trigger: "blur"}],
         password: [{required: true, message: "密码不能为空", trigger: "blur"}]
     }
     submitForm(){
@@ -48,12 +48,12 @@ export default class LoginView extends Vue {
             if (valid) {
                 this.loginloading = true;
                 let userid = await GetUserId();
-                let username = this.user.username;
+                let email = this.user.email;
                 let pass = passHash(this.user.password);
 
                 let api = this.$gConst.apiRoot + "/user-login";
                 let res = await fetchPost(api, {
-                    username,
+                    email,
                     pass,
                     userid
                 });
@@ -90,7 +90,7 @@ export default class LoginView extends Vue {
 }
 
 export class LoginUser{
-    username: string = "";
+    email: string = "";
     password: string = "";
 }
 </script>
