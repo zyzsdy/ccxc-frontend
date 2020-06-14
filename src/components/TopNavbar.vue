@@ -5,6 +5,7 @@
             <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="left-menu" :router="true">
                   <el-menu-item index="/">CCBC X</el-menu-item>
                   <el-menu-item index="/about">关于CCBC X</el-menu-item>
+                  <el-menu-item index="/userbackend" v-if="isAdmin"><el-tag type="danger" effect="dark">出题组后台</el-tag></el-menu-item>
             </el-menu>
       </el-col>
       <el-col>
@@ -40,6 +41,10 @@ export default class TopNavbar extends Vue {
 
     get isLogin(){
       return localStorage.getItem("token") !== null;
+    }
+
+    get isAdmin(){
+      return parseInt(localStorage.getItem("roleid") || "0") >= 4;
     }
 
     get username(){

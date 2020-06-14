@@ -45,6 +45,21 @@ Vue.use(VueRouter)
     path: '/myprofile',
     name: 'MyProfile',
     component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/MyProfile.vue')
+  },
+  {
+    path: '/userbackend',
+    name: 'UserBackend',
+    component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/AdminHome.vue')
+  },
+  {
+    path: '/userbackend/cachepurge',
+    name: 'AdminCachePurge',
+    component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/CachePurge.vue')
+  },
+  {
+    path: '/userbackend/announcement',
+    name: 'Announcement',
+    component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/Announcement.vue')
   }
 ]
 
