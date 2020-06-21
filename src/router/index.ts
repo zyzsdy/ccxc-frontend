@@ -64,7 +64,7 @@ Vue.use(VueRouter)
   },
   {
     path: '/userbackend/announcement',
-    name: 'Announcement',
+    name: 'AnnouncementAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/Announcement.vue')
   }
 ]

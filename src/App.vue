@@ -60,4 +60,8 @@ body{
 .home{
   padding-top: 60px;
 }
+
+img{
+  width: 100%;
+}
 </style>
