@@ -71,6 +71,11 @@ Vue.use(VueRouter)
     path: '/userbackend/user',
     name: 'UserAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/UserAdmin.vue')
+  },
+  {
+    path: '/userbackend/puzzlegroup',
+    name: 'PuzzleGroupAdmin',
+    component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/PuzzleGroup.vue')
   }
 ]
 

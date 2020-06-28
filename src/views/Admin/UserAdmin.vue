@@ -11,7 +11,12 @@
           <el-table-column label="用户名">
               <template slot-scope="u">
                   <el-tooltip effect="dark" placement="bottom">
-                      <div slot="content">Email: {{ u.row.email }}<br>手机: {{ u.row.phone ? u.row.phone : "[未设置]"}}<br>注册时间: {{ u.row.regTime }}</div>
+                      <div slot="content">
+                        Email: {{ u.row.email }}<br>
+                        手机: {{ u.row.phone ? u.row.phone : "[未设置]"}}<br>
+                        注册时间: {{ u.row.regTime }}<br>
+                        个人简介: {{ u.row.profile }}
+                      </div>
                       <span>{{ u.row.username }}</span>
                   </el-tooltip>
               </template>
