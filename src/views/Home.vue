@@ -3,11 +3,13 @@
     <TopNavbar activeIndex="/"></TopNavbar>
     <el-row>
       <el-col :sm="24" :md="{span: 12, offset: 6}">
-        <div class="title-logo">
+        <div class="title-logo" v-if="isFinishCountdown" @click="startGame">
           CCBC X
         </div>
-        <div class="countdown hidden-sm-and-down">{{countdown}}</div>
-        <div class="countdown-md hidden-md-and-up">{{countdown}}</div>
+        <div v-else>
+          <div class="countdown hidden-sm-and-down">{{countdown}}</div>
+          <div class="countdown-md hidden-md-and-up">{{countdown}}</div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -20,7 +22,7 @@ import TopNavbar from '@/components/TopNavbar.vue'
 import { formatCountdown } from '@/utils/formatDate'
 import { sleep } from '@/utils/asyncUtils'
 import 'element-ui/lib/theme-chalk/display.css';
-import { fetchPost, defaultApiErrorAction } from '@/utils/fetchPost';
+import { fetchPost, fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost';
 
 @Component({
     components: {
@@ -42,11 +44,48 @@ export default class HomeView extends Vue {
     }else{
       defaultApiErrorAction(this, data);
     }
+
+    (globalThis as any).start = () => {
+      this.startGame()
+    }
+  }
+  get isFinishCountdown(){
+    let nowtime = new Date().getTime();
+    return nowtime > this.endTimestamp;
   }
   async startCountdown(){
     while(this.$route.path == '/'){
       this.countdown = formatCountdown(this.endTimestamp);
       await sleep(1000);
+    }
+  }
+  isLogin(){
+    return localStorage.getItem("token") !== null;
+  }
+  isReguser(){
+    return parseInt(localStorage.getItem("roleid") || "0") >= 2;
+  }
+  async startGame(){
+    if(!this.isLogin()){
+      this.$router.push('/login')
+      return;
+    }
+
+    if(!this.isReguser()){
+      this.$router.push('/myprofile');
+      this.$message.error("未报名用户不能参赛。");
+      return;
+    }
+
+
+    let api = this.$gConst.apiRoot + "/start";
+    let res = await fetchPostWithSign(api, {});
+    let data = await res.json();
+
+    if(data['status'] == 1){
+      this.$router.push('/puzzlegrouplist');
+    }else{
+      defaultApiErrorAction(this, data);
     }
   }
 }
@@ -66,6 +105,7 @@ export default class HomeView extends Vue {
   border-radius: 10px;
   box-shadow: 5px 5px 5px rgba(255, 255, 255, 0.1);
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
 }
 .countdown{
   position: absolute;

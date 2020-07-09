@@ -25,7 +25,7 @@ export function formatCountdown(endTimestamp: number){
     let now = new Date().getTime();
     let t = endTimestamp - now;
 
-    if(t < 0) return "--:--:--";
+    if(t < 0) return "请刷新页面";
 
     let s = getTwoDigits(Math.floor((t / 1000) % 60));
     let m = getTwoDigits(Math.floor((t / 60000) % 60));
