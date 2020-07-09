@@ -37,7 +37,7 @@
                 <el-col :sm="24" :md="16" :xl="18">
                     <div class="hidden-md-and-up line-title" style="margin-bottom: 20px;"></div>
                     <div v-if="profileInfo.group_info == null">
-                        <el-alert title="请注意，您现在还未完成报名" description="建立组队或者接受邀请来完成报名。" type="info" :closable="false" show-icon></el-alert>
+                        <el-alert title="请注意，您现在还未完成报名。单人参赛也必须建立单人组队。" description="建立组队或者接受邀请来完成报名。" type="info" :closable="false" show-icon></el-alert>
 
                         <div v-if="profileInfo.user_info.roleid == 1 && inviteInfoList.length > 0">
                             <h3>邀请信息</h3>

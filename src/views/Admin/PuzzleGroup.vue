@@ -17,6 +17,7 @@
           <div>
             <div>
                 <span>分区名称：</span>
+                <el-checkbox v-model="editingPuzzleGroupItem.isHide">隐藏分区</el-checkbox>
                 <el-input v-model="editingPuzzleGroupItem.pg_name"></el-input>
             </div>
             <div>
@@ -40,7 +41,12 @@
           <h3>已有题目分区</h3>
           <el-table :data="pgList" class="info-table">
             <el-table-column label="ID" prop="pgid" width="50px"></el-table-column>
-            <el-table-column label="分区名称" prop="pg_name"></el-table-column>
+            <el-table-column label="分区名称" prop="pg_name">
+              <template slot-scope="u">
+                <span>{{ u.row.pg_name }}</span>
+                <el-tag v-if="u.row.isHide" effect="dark" size="mini">隐藏分区</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column label="内容" prop="firstLine"></el-table-column>
             <el-table-column label="操作" width="260px">
               <template slot-scope="u">
@@ -119,7 +125,8 @@ export default class PuzzleGroupView extends Vue {
             let api = this.$gConst.apiRoot + "/admin/add-puzzle-group";
             let res = await fetchPostWithSign(api, {
                 pg_name: this.editingPuzzleGroupItem.pg_name,
-                pg_desc: this.editingPuzzleGroupItem.pg_desc
+                pg_desc: this.editingPuzzleGroupItem.pg_desc,
+                is_hide: this.editingPuzzleGroupItem.isHide ? 1 : 0
             });
             data = await res.json();
         } else {
@@ -127,7 +134,8 @@ export default class PuzzleGroupView extends Vue {
             let res = await fetchPostWithSign(api, {
                 pgid: this.editingPuzzleGroupItem.pgid,
                 pg_name: this.editingPuzzleGroupItem.pg_name,
-                pg_desc: this.editingPuzzleGroupItem.pg_desc
+                pg_desc: this.editingPuzzleGroupItem.pg_desc,
+                is_hide: this.editingPuzzleGroupItem.isHide ? 1 : 0
             });
             data = await res.json();
         }
@@ -171,9 +179,12 @@ class PuzzleGroupItem{
     pgid: number = 0;
     pg_name: string = "";
     pg_desc: string = "";
+    isHide: boolean = false;
 
     constructor(obj?: any) {
         if (obj) Object.assign(this, obj);
+        if(obj && obj["is_hide"] && obj["is_hide"] == 1) this.isHide = true;
+        else this.isHide = false;
     }
 
     get firstLine(){

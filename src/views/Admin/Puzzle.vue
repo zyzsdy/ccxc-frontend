@@ -24,7 +24,7 @@
                         <el-option
                             v-for="pg in pgList"
                             :key="pg.pgid"
-                            :label="pg.pg_name"
+                            :label="pg.showtitle"
                             :value="pg.pgid">
                         </el-option>
                     </el-select>
@@ -158,7 +158,7 @@ export default class PuzzleView extends Vue {
             label: "题目是HTML"
         }
     ];
-    //0-小题 1-组/区域Meta 2-FinalMeta 3-不计分题目
+    //0-小题 1-组/区域Meta 2-PreFinalMeta 3-FinalMeta 4-不计分题目
     answerTypeOptions = [
         {
             id: 0,
@@ -170,10 +170,14 @@ export default class PuzzleView extends Vue {
         },
         {
             id: 2,
-            label: "FinalMeta"
+            label: "FM准入"
         },
         {
             id: 3,
+            label: "FinalMeta"
+        },
+        {
+            id: 4,
             label: "不计分题目"
         }
     ];
@@ -347,9 +351,16 @@ class PuzzleGroupItem{
     pgid: number = 0;
     pg_name: string = "";
     pg_desc: string = "";
+    isHide: boolean = false;
 
     constructor(obj?: any) {
         if (obj) Object.assign(this, obj);
+        if(obj && obj["is_hide"] && obj["is_hide"] == 1) this.isHide = true;
+        else this.isHide = false;
+    }
+    get showtitle(){
+        if(this.isHide) return `${this.pg_name}[隐藏分区]`;
+        else return this.pg_name;
     }
 }
 </script>

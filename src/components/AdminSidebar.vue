@@ -30,7 +30,7 @@
         </el-menu-item-group>
     </el-menu>
     <el-dialog title="上传图片" :visible.sync="uploadVisible" :close-on-click-modal="false" :limit="1">
-      <el-upload class="uploader-area" drag accept="image/*" action="bas" :http-request="upload" :show-file-list="false">
+      <el-upload class="uploader-area" drag accept="*/*" action="bas" :http-request="upload" :show-file-list="false">
         <i class="el-icon-upload2"></i> 点击选择图片或将图片拖到这里
       </el-upload>
       <div class="upload-finish-files" v-for="uploadedItem in uploadResult" :key="uploadedItem.id">
