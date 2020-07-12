@@ -81,6 +81,16 @@ Vue.use(VueRouter)
     path: '/userbackend/puzzle',
     name: 'PuzzleAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/Puzzle.vue')
+  },
+  {
+    path: '/puzzlegrouplist',
+    name: 'PuzzleGroupList',
+    component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/PuzzleGroupList.vue')
+  },
+  {
+    path: '/puzzlegroup/:pgid',
+    name: 'PuzzleGroupDetail',
+    component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/PuzzleGroupDetail.vue')
   }
 ]
 

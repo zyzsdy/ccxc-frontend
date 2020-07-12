@@ -71,7 +71,7 @@
                     <el-input 
                     type="textarea"
                     placeholder="题目中显示的HTML"
-                    v-model="editingPuzzleItem.image"
+                    v-model="editingPuzzleItem.html"
                     :autosize="{minRows: 8}">
                     </el-input>
                 </el-col>
@@ -114,8 +114,8 @@
             <el-table-column label="答案" prop="answer"></el-table-column>
             <el-table-column label="操作" width="260px">
               <template slot-scope="u">
-                <el-button type="success" size="small" @click="editPuzzle(u.row.pgid)">编辑</el-button>
-                <el-popconfirm title="是否确认删除？" @onConfirm="deletePuzzle(u.row.pgid)">
+                <el-button type="success" size="small" @click="editPuzzle(u.row.pid)">编辑</el-button>
+                <el-popconfirm title="是否确认删除？" @onConfirm="deletePuzzle(u.row.pid)">
                   <el-button
                     slot="reference"
                     type="danger"
