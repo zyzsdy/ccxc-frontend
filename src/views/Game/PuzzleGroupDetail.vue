@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <BottomNavbar activeIndex="/puzzlegroup"/>
+    <BottomNavbar :activeIndex="'/puzzlegroup/' + pgid" :activeGroup="puzzleGroupDetailInfo.puzzle_group_info"></BottomNavbar>
     <el-container>
         <el-main>
             <el-row>
@@ -11,7 +11,7 @@
                         <div v-html="puzzleGroupDetailInfo.puzzle_group_info.renderHtml"></div>
                     </div>
                     <div class="puzzle-group-list">
-                        <div class="puzzle-group" :class="g.statusClass" v-for="g in puzzleGroupDetailInfo.puzzle_list" :key="g.pid">
+                        <div class="puzzle-group" :class="g.statusClass" v-for="g in puzzleGroupDetailInfo.puzzle_list" :key="g.pid" @click="showPuzzleDetail(g.pid)">
                             {{ g.title }}
                         </div>
                     </div>
@@ -39,8 +39,6 @@ export default class PuzzleGroupDetailView extends Vue {
     async mounted(){
         this.pgid = parseInt(this.$route.params.pgid);
 
-        console.log("PGID: ", this.pgid);
-
         if(!this.isLogin()){
             this.$router.push('/login')
             return;
@@ -60,6 +58,9 @@ export default class PuzzleGroupDetailView extends Vue {
     }
     isLogin(){
         return localStorage.getItem("token") !== null;
+    }
+    showPuzzleDetail(pid: number){
+        this.$router.push(`/puzzle/${pid}`);
     }
 }
 

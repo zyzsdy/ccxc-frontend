@@ -91,6 +91,11 @@ Vue.use(VueRouter)
     path: '/puzzlegroup/:pgid',
     name: 'PuzzleGroupDetail',
     component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/PuzzleGroupDetail.vue')
+  },
+  {
+    path: '/puzzle/:pid',
+    name: 'PuzzleDetail',
+    component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/PuzzleDetail.vue')
   }
 ]
 

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <BottomNavbar activeIndex="/puzzlegrouplist"/>
+    <BottomNavbar activeIndex="/puzzlegrouplist"></BottomNavbar>
     <el-container>
         <el-main>
             <el-row>
@@ -50,8 +50,48 @@ export default class PuzzleGroupListView extends Vue {
     isLogin(){
         return localStorage.getItem("token") !== null;
     }
-    showgroupdetail(pgid: number){
-        this.$router.push(`/puzzlegroup/${pgid}`);
+    async showgroupdetail(pgid: number){
+        let puzzleGroupItem = this.puzzleGroupListInfo.puzzleGroups.find(it => it.pgid == pgid);
+
+        //若已打开则直接跳转
+        if(puzzleGroupItem?.isOpen){
+            this.$router.push(`/puzzlegroup/${pgid}`);
+            return;
+        }
+
+        //若未打开，则判断是否可开放。
+        if(!this.puzzleGroupListInfo.isOpenNextGroup){
+            this.$message({
+                message: "不能进入未开放的区域。",
+                type: "error"
+            });
+            return;
+        }
+
+        try{
+            await this.$confirm("您现在可以开放此区域，是否确认开放？", "开放区域", {
+                type: "info"
+            });
+        }
+        catch(e){
+            return;
+        }
+
+        let api = this.$gConst.apiRoot + "/unlock-group";
+        let res = await fetchPostWithSign(api, {
+            unlock_puzzle_group_id: pgid
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            this.$message({
+                type: "success",
+                message: "开放新区域成功！"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        }else{
+            defaultApiErrorAction(this, data);
+        }
     }
 }
 
