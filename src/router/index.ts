@@ -96,6 +96,11 @@ Vue.use(VueRouter)
     path: '/puzzle/:pid',
     name: 'PuzzleDetail',
     component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/PuzzleDetail.vue')
+  },
+  {
+    path: '/finalend',
+    name: 'FinalEnd',
+    component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/FinalEnd.vue')
   }
 ]
 

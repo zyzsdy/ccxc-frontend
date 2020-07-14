@@ -98,6 +98,15 @@ export default class PuzzleDetailView extends Vue {
         let data = await res.json();
 
         if(data['status'] == 1){
+            if(data.answer_status == 1 && this.puzzle.answer_type == 3){
+                this.$message({
+                    type: "success",
+                    message: "回答正确！"
+                });
+                this.$router.push('/finalend');
+                return;
+            }
+
             let type: "success" | "error" | "info" | "warning" = "warning";
             if(data.answer_status == 1) type = "success";
             else if(data.answer_status == 2) type = "error";

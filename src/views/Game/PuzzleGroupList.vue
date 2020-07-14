@@ -12,6 +12,16 @@
                             {{ g.pg_name }}
                         </div>
                     </div>
+                    <div class="puzzle-group-list" v-if="puzzleGroupListInfo.isOpenPreFinal">
+                        <div class="puzzle-group" :class="g.statusClass" v-for="g in preFinalList" :key="g.pid" @click="showPuzzleDetail(g.pid)">
+                            {{ g.title }}
+                        </div>
+                    </div>
+                    <div class="puzzle-group-list" v-if="puzzleGroupListInfo.isOpenFinalMeta">
+                        <div class="puzzle-group" :class="g.statusClass" v-for="g in finalList" :key="g.pid" @click="showPuzzleDetail(g.pid)">
+                            {{ g.title }}
+                        </div>
+                    </div>
                 </el-col>
             </el-row>
         </el-main>
@@ -31,6 +41,8 @@ import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
 })
 export default class PuzzleGroupListView extends Vue {
     puzzleGroupListInfo: PuzzleGroupListInfo = new PuzzleGroupListInfo();
+    preFinalList: Puzzle[] = [];
+    finalList: Puzzle[] = [];
     async mounted(){
         if(!this.isLogin()){
             this.$router.push('/login')
@@ -43,6 +55,42 @@ export default class PuzzleGroupListView extends Vue {
 
         if(data['status'] == 1){
             this.puzzleGroupListInfo = new PuzzleGroupListInfo(data);
+
+            if(this.puzzleGroupListInfo.isOpenPreFinal){
+                let preApi = this.$gConst.apiRoot + "/play/get-pre-final-puzzle-list";
+                let preRes = await fetchPostWithSign(preApi, {});
+                let preData = await preRes.json();
+
+                if(preData['status'] == 1){
+                    if(preData.puzzle_list){
+                        let preFinalList: Puzzle[] = [];
+                        for(let pi of preData.puzzle_list){
+                            preFinalList.push(new Puzzle(pi));
+                        }
+                        this.preFinalList = preFinalList;
+                    }
+                }else{
+                    defaultApiErrorAction(this, preData);
+                }
+            }
+
+            if(this.puzzleGroupListInfo.isOpenFinalMeta){
+                let finalApi = this.$gConst.apiRoot + "/play/get-final-meta-puzzle-list";
+                let finalRes = await fetchPostWithSign(finalApi, {});
+                let finalData = await finalRes.json();
+
+                if(finalData['status'] == 1){
+                    if(finalData.puzzle_list){
+                        let finalList: Puzzle[] = [];
+                        for(let pi of finalData.puzzle_list){
+                            finalList.push(new Puzzle(pi));
+                        }
+                        this.finalList = finalList;
+                    }
+                }else{
+                    defaultApiErrorAction(this, finalData);
+                }
+            }
         }else{
             defaultApiErrorAction(this, data);
         }
@@ -92,6 +140,9 @@ export default class PuzzleGroupListView extends Vue {
         }else{
             defaultApiErrorAction(this, data);
         }
+    }
+    showPuzzleDetail(pid: number){
+        this.$router.push(`/puzzle/${pid}`);
     }
 }
 
@@ -143,6 +194,22 @@ class PuzzleGroup{
         else return "puzzle-group-locked";
     }
 }
+
+class Puzzle{
+    pid: number = 0;
+    title: string = "";
+    answer_type: number = 0;
+    isFinish: boolean = false;
+    constructor(obj?: any){
+        if(obj) Object.assign(this, obj);
+        if(obj && obj["is_finish"] && obj["is_finish"] == 1) this.isFinish = true;
+        else this.isFinish = false;
+    }
+    get statusClass(){
+        if(this.isFinish) return "puzzle-finished";
+        else return "puzzle-open";
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -183,6 +250,24 @@ class PuzzleGroup{
 }
 .puzzle-group-locked:hover{
     background-color: #afafaf;
+    color: black;
+}
+.puzzle-open{
+    border-color: #2d5f69;
+    background-color: #2d5f69;
+}
+.puzzle-open:hover{
+    border-color: #5ABDD0;
+    background-color: #5ABDD0;
+    color: black;
+}
+.puzzle-finished{
+    border-color: #3c704e;
+    background-color: #3c704e;
+}
+.puzzle-finished:hover{
+    border-color: #6DCC8E;
+    background-color: #6DCC8E;
     color: black;
 }
 </style>
