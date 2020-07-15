@@ -18,29 +18,37 @@
           <slot></slot>
       </el-col>
       <el-col>
-        <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
+        <el-menu mode="horizontal" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
             <el-submenu index="system-menu">
                 <template slot="title"><i class="el-icon-menu"></i></template>
-                <el-menu-item @click="showMailbox" index="show-mailbox">信箱</el-menu-item>
+                <el-menu-item @click="showMailbox">信箱</el-menu-item>
                 <el-menu-item @click="showHelp" index="show-help">显示帮助</el-menu-item>
                 <el-menu-item index="/">返回主页</el-menu-item>
             </el-submenu>
         </el-menu>
       </el-col>
     </el-row>
+    <el-dialog title="信箱" :visible.sync="showMailBoxDialog" width="90%" :modal-append-to-body="false">
+      <MessageBox></MessageBox>
+    </el-dialog>
   </el-header>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
+import MessageBox from '@/components/MessageBox.vue'
 import 'element-ui/lib/theme-chalk/display.css';
 
-@Component
+@Component({
+    components: {
+        MessageBox
+    }
+})
 export default class BottomNavbar extends Vue {
     @Prop() private activeIndex!: string
     @Prop() private activeGroup!: {pgid: number, pg_name: string}
-
+    showMailBoxDialog: boolean = false;
     get innerGroup(){
       if(this.activeGroup) return this.activeGroup;
       else return {pgid: 0, pg_name: ""};
@@ -57,7 +65,7 @@ export default class BottomNavbar extends Vue {
       return localStorage.getItem("username") || "[空名称][NULL]";
     }
     showMailbox(){
-
+      this.showMailBoxDialog = true;
     }
     showHelp(){
         

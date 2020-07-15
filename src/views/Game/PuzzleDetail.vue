@@ -3,7 +3,7 @@
     <BottomNavbar :activeIndex="'/puzzle/' + pid" :activeGroup="puzzle.groupInfo">
         <el-input v-model="answer" placeholder="请输入答案" class="answer-input hidden-sm-and-down">
             <el-tooltip class="item" effect="dark" content="最近10次回答记录" placement="top" slot="prepend">
-                <el-button type="primary" icon="el-icon-files"></el-button>
+                <el-button type="primary" icon="el-icon-files" @click="showAnswerLog"></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="提交答案" placement="top" slot="append">
                 <el-button type="primary" icon="el-icon-s-promotion" @click="submit"></el-button>
@@ -13,7 +13,7 @@
         <el-drawer title="提交答案" :visible="drawer" direction="btt" :with-header="false" @close="drawer = false" :modal="false">
             <div>
                 <el-tooltip class="item" effect="dark" content="最近10次回答记录" placement="top" slot="prepend">
-                    <el-button icon="el-icon-files">最近10次回答记录</el-button>
+                    <el-button icon="el-icon-files" @click="showAnswerLog">最近10次回答记录</el-button>
                 </el-tooltip>
                 <el-input v-model="answer" placeholder="请输入答案" class="answer-input">
                     <el-tooltip class="item" effect="dark" content="提交答案" placement="top" slot="append">
@@ -23,6 +23,14 @@
             </div>
         </el-drawer>
     </BottomNavbar>
+    <el-dialog title="回答记录" :visible.sync="answerLogDialog">
+        <el-table :data="answerLog" :row-class-name="answerLogRowClassName">
+            <el-table-column property="formatedDate" label="回答时间"></el-table-column>
+            <el-table-column property="user_name" label="回答者"></el-table-column>
+            <el-table-column property="answer" label="答案"></el-table-column>
+            <el-table-column property="statusLabel" label="状态"></el-table-column>
+        </el-table>
+    </el-dialog>
     <el-container>
         <el-main>
             <el-row>
@@ -52,6 +60,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import BottomNavbar from '@/components/BottomNavbar.vue'
 import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
 import 'element-ui/lib/theme-chalk/display.css';
+import { formatTimestamp } from '@/utils/formatDate';
 import marked from "marked";
 
 @Component({
@@ -64,6 +73,8 @@ export default class PuzzleDetailView extends Vue {
     puzzle: Puzzle = new Puzzle();
     answer: string = "";
     drawer: boolean = false;
+    answerLogDialog: boolean = false;
+    answerLog: AnswerLog[] = [];
     async mounted(){
         this.pid = parseInt(this.$route.params.pid);
 
@@ -119,6 +130,30 @@ export default class PuzzleDetailView extends Vue {
             defaultApiErrorAction(this, data);
         }
     }
+    async showAnswerLog(){
+        let api = this.$gConst.apiRoot + "/play/get-last-answer-log";
+        let res = await fetchPostWithSign(api, {
+            pid: this.pid
+        });
+        let data = await res.json();
+
+        if(data['status'] == 1){
+            if(data.answer_log){
+                let answerLogList = [];
+                for(let al of data.answer_log){
+                    answerLogList.push(new AnswerLog(al));
+                }
+                this.answerLog = answerLogList;
+
+                this.answerLogDialog = true;
+            }
+        }else{
+            defaultApiErrorAction(this, data);
+        }
+    }
+    answerLogRowClassName(opt: {row: AnswerLog, rowIndex: number}){
+        return opt.row.statusClass;
+    }
 }
 
 class Puzzle{
@@ -144,6 +179,36 @@ class Puzzle{
         }
     }
 }
+
+class AnswerLog{
+    id: number = 0;
+    create_time: number = 0;
+    uid: number = 0;
+    user_name: string = "";
+    gid: number = 0;
+    pid: number = 0;
+    answer: string = "";
+    status: number = 0;
+
+    constructor(obj?: any){
+        if(obj) Object.assign(this, obj);
+    }
+    get formatedDate(){
+        return formatTimestamp(this.create_time);
+    }
+    get statusLabel(){
+        if(this.status == 1) return "OK";
+        else if(this.status == 2) return "WRONG ANSWER";
+        else if(this.status == 3) return "COOL DOWN";
+        else return "";
+    }
+    get statusClass(){
+        if(this.status == 1) return "success-row";
+        else if(this.status == 2) return "danger-row";
+        else if(this.status == 3) return "info-row";
+        else return "";
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -160,6 +225,20 @@ class Puzzle{
 .answer-input{
     .el-input__inner{
         background-color: #464646;
+    }
+}
+.el-table{
+
+    .danger-row {
+        background: #833a3a;
+    }
+
+    .info-row {
+        background: #337380;
+    }
+
+    .success-row {
+        background: #3c8a57;
     }
 }
 </style>
