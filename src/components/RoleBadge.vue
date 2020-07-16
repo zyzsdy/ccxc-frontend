@@ -3,7 +3,7 @@
     <span v-else-if="roleid == 1" class="rolebadge normal">未报名用户</span>
     <span v-else-if="roleid == 2" class="rolebadge member">队员</span>
     <span v-else-if="roleid == 3" class="rolebadge leader">队长</span>
-    <span v-else-if="roleid == 4" class="rolebadge organizer">出题组成员></span>
+    <span v-else-if="roleid == 4" class="rolebadge organizer">出题组成员</span>
     <span v-else-if="roleid == 5" class="rolebadge admin">管理员</span>
     <span v-else class="rolebadge uma">未知生物</span>
 </template>
