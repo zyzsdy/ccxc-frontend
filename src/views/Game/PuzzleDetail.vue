@@ -62,6 +62,7 @@ import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
 import 'element-ui/lib/theme-chalk/display.css';
 import { formatTimestamp } from '@/utils/formatDate';
 import marked from "marked";
+import { setIcon } from '@/utils/asyncUtils'
 
 @Component({
     components: {
@@ -96,6 +97,8 @@ export default class PuzzleDetailView extends Vue {
         }else{
             defaultApiErrorAction(this, data);
         }
+
+        setIcon();
     }
     isLogin(){
         return localStorage.getItem("token") !== null;

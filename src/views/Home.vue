@@ -9,6 +9,7 @@
         <div v-else>
           <div class="countdown hidden-sm-and-down">{{countdown}}</div>
           <div class="countdown-md hidden-md-and-up">{{countdown}}</div>
+          <el-button @click="startGame" v-if="isAAAA">emmmmmm</el-button>
         </div>
       </el-col>
     </el-row>
@@ -52,6 +53,9 @@ export default class HomeView extends Vue {
   get isFinishCountdown(){
     let nowtime = new Date().getTime();
     return nowtime > this.endTimestamp;
+  }
+  get isAAAA(){
+    return localStorage.getItem("etc") == "52412";
   }
   async startCountdown(){
     while(this.$route.path == '/'){

@@ -6,6 +6,7 @@
                   <el-menu-item index="/">CCBC X</el-menu-item>
                   <el-menu-item index="/about">关于CCBC X</el-menu-item>
                   <el-menu-item index="/announcement">公告</el-menu-item>
+                  <el-menu-item index="/scoreboard">排行榜</el-menu-item>
                   <el-menu-item index="/userbackend" v-if="isAdmin"><el-tag type="danger" effect="dark">出题组后台</el-tag></el-menu-item>
             </el-menu>
             <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="left-menu hidden-md-and-up" :router="true">
@@ -14,6 +15,7 @@
                     <el-menu-item index="/">首页</el-menu-item>
                     <el-menu-item index="/about">关于CCBC X</el-menu-item>
                     <el-menu-item index="/announcement">公告</el-menu-item>
+                    <el-menu-item index="/scoreboard">排行榜</el-menu-item>
                     <el-menu-item index="/userbackend" v-if="isAdmin"><el-tag type="danger" effect="dark">出题组后台</el-tag></el-menu-item>
                   </el-submenu>
             </el-menu>

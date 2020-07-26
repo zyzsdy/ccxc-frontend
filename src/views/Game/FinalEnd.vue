@@ -23,6 +23,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
 import marked from "marked";
+import { setIcon } from '@/utils/asyncUtils'
 
 @Component
 export default class FinalEndView extends Vue {
@@ -42,6 +43,8 @@ export default class FinalEndView extends Vue {
         }else{
             defaultApiErrorAction(this, data);
         }
+
+        setIcon();
     }
     isLogin(){
         return localStorage.getItem("token") !== null;

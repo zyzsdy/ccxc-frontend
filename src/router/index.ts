@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Announcement from '../views/Home/Announcement.vue'
+import Scoreboard from '../views/Home/Scoreboard.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ Vue.use(VueRouter)
     path: '/announcement',
     name: 'Announcement',
     component: Announcement
+  },
+  {
+    path: '/scoreboard',
+    name: 'Scoreboard',
+    component: Scoreboard
   },
   {
     path: '/docs/privacypolicy',
@@ -61,6 +67,11 @@ Vue.use(VueRouter)
     path: '/userbackend/cachepurge',
     name: 'AdminCachePurge',
     component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/CachePurge.vue')
+  },
+  {
+    path: '/userbackend/message',
+    name: 'MessageAdmin',
+    component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/Message.vue')
   },
   {
     path: '/userbackend/announcement',

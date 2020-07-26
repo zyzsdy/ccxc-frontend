@@ -72,6 +72,7 @@ export default class LoginView extends Vue {
                     localStorage.setItem("roleid", data["user_login_info"]["roleid"]);
                     localStorage.setItem("token", data["user_login_info"]["token"]);
                     localStorage.setItem("sk", data["user_login_info"]["sk"]);
+                    localStorage.setItem("etc", data["user_login_info"]["etc"]);
                 }else{
                     this.loginloading = false;
                     defaultApiErrorAction(this, data);

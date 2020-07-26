@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost';
 
 @Component
 export default class App extends Vue {
@@ -40,6 +41,9 @@ export default class App extends Vue {
     this.$gConst.globalBus.$on("reload", () => {
       this.reload();
     });
+
+    this.sendHeartbeat();
+    setInterval(this.sendHeartbeat, 60000);
   }
 
   reload(){
@@ -47,6 +51,24 @@ export default class App extends Vue {
     this.$nextTick(() => {
       this.isRouterVisible = true;
     });
+  }
+
+  isLogin(){
+    return localStorage.getItem("token") !== null;
+  }
+  async sendHeartbeat(){
+    if(!this.isLogin()) return;
+
+    let api = this.$gConst.apiRoot + "/heartbeat";
+    let res = await fetchPostWithSign(api, {});
+    let data = await res.json();
+
+    if (data["status"] == 1) {
+      localStorage.setItem("newMessage", data["new_message"]);
+      this.$gConst.globalBus.$emit("new-message", data["new_message"]);
+    } else {
+      defaultApiErrorAction(this, data);
+    }
   }
 }
 </script>

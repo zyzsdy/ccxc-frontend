@@ -27,6 +27,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import BottomNavbar from '@/components/BottomNavbar.vue'
 import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
 import marked from "marked";
+import { setIcon } from '@/utils/asyncUtils'
 
 @Component({
     components: {
@@ -55,6 +56,8 @@ export default class PuzzleGroupDetailView extends Vue {
         }else{
             defaultApiErrorAction(this, data);
         }
+
+        setIcon();
     }
     isLogin(){
         return localStorage.getItem("token") !== null;
