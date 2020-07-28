@@ -74,6 +74,11 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/Message.vue')
   },
   {
+    path: '/userbackend/answerlog',
+    name: 'AnswerLog',
+    component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/AnswerLog.vue')
+  },
+  {
     path: '/userbackend/announcement',
     name: 'AnnouncementAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/Announcement.vue')
