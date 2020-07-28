@@ -84,8 +84,12 @@
             </el-row>
             <el-row>
                 <el-col :span="2"><span>答案：</span></el-col>
-                <el-col :span="22">
+                <el-col :span="10">
                     <el-input v-model="editingPuzzleItem.answer"></el-input>
+                </el-col>
+                <el-col :span="2"><span>跳转关键字：</span></el-col>
+                <el-col :span="10">
+                    <el-input v-model="editingPuzzleItem.jump_keyword"></el-input>
                 </el-col>
             </el-row>
           </div>
@@ -112,6 +116,7 @@
                 </template>
             </el-table-column>
             <el-table-column label="答案" prop="answer"></el-table-column>
+            <el-table-column label="跳转关键字（隐藏）" prop="jump_keyword"></el-table-column>
             <el-table-column label="操作" width="260px">
               <template slot-scope="u">
                 <el-button type="success" size="small" @click="editPuzzle(u.row.pid)">编辑</el-button>
@@ -272,7 +277,8 @@ export default class PuzzleView extends Vue {
                 image: this.editingPuzzleItem.image,
                 html: this.editingPuzzleItem.html,
                 answer_type: this.editingPuzzleItem.answer_type,
-                answer: this.editingPuzzleItem.answer
+                answer: this.editingPuzzleItem.answer,
+                jump_keyword: this.editingPuzzleItem.jump_keyword
             });
             data = await res.json();
         } else {
@@ -286,7 +292,8 @@ export default class PuzzleView extends Vue {
                 image: this.editingPuzzleItem.image,
                 html: this.editingPuzzleItem.html,
                 answer_type: this.editingPuzzleItem.answer_type,
-                answer: this.editingPuzzleItem.answer
+                answer: this.editingPuzzleItem.answer,
+                jump_keyword: this.editingPuzzleItem.jump_keyword
             });
             data = await res.json();
         }
@@ -337,6 +344,7 @@ class PuzzleItem{
     html: string = "";
     answer_type: number = 0;
     answer: string = "";
+    jump_keyword: string = "";
 
     constructor(obj?: any) {
         if (obj) Object.assign(this, obj);

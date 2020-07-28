@@ -25,6 +25,9 @@ export default class App extends Vue {
         type: "error"
       });
       this.$router.push(data.location);
+      this.$nextTick(() => {
+        this.reload();
+      })
     });
     this.$gConst.globalBus.$on("log-out", (data: {message: string, type: "error" | "success" | "warning" | "info" | undefined}) => {
       localStorage.removeItem("uid");

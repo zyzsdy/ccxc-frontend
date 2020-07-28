@@ -203,12 +203,14 @@ class AnswerLog{
         if(this.status == 1) return "OK";
         else if(this.status == 2) return "WRONG ANSWER";
         else if(this.status == 3) return "COOL DOWN";
+        else if(this.status == 6) return "HIT KEYWORD";
         else return "";
     }
     get statusClass(){
         if(this.status == 1) return "success-row";
         else if(this.status == 2) return "danger-row";
         else if(this.status == 3) return "info-row";
+        else if(this.status == 6) return "warning-row";
         else return "";
     }
 }
@@ -242,6 +244,10 @@ class AnswerLog{
 
     .success-row {
         background: #3c8a57;
+    }
+
+    .warning-row{
+        background: #817335;
     }
 }
 </style>
