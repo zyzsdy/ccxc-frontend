@@ -65,6 +65,19 @@
                     ></el-input>
                 </el-col>
             </el-row>
+            <el-row>
+                <el-col :span="2">
+                    <span>扩展内容（回答正确后显示）：</span>
+                </el-col>
+                <el-col :span="22">
+                    <el-input
+                    type="textarea"
+                    placeholder="使用Markdown格式书写内容"
+                    v-model="editingPuzzleItem.extend_content"
+                    :autosize="{minRows: 4}"
+                    ></el-input>
+                </el-col>
+            </el-row>
             <el-row v-if="editingPuzzleItem.type == 1">
                 <el-col :span="2"><span>题目HTML：</span></el-col>
                 <el-col :span="22">
@@ -278,7 +291,8 @@ export default class PuzzleView extends Vue {
                 html: this.editingPuzzleItem.html,
                 answer_type: this.editingPuzzleItem.answer_type,
                 answer: this.editingPuzzleItem.answer,
-                jump_keyword: this.editingPuzzleItem.jump_keyword
+                jump_keyword: this.editingPuzzleItem.jump_keyword,
+                extend_content: this.editingPuzzleItem.extend_content
             });
             data = await res.json();
         } else {
@@ -293,7 +307,8 @@ export default class PuzzleView extends Vue {
                 html: this.editingPuzzleItem.html,
                 answer_type: this.editingPuzzleItem.answer_type,
                 answer: this.editingPuzzleItem.answer,
-                jump_keyword: this.editingPuzzleItem.jump_keyword
+                jump_keyword: this.editingPuzzleItem.jump_keyword,
+                extend_content: this.editingPuzzleItem.extend_content
             });
             data = await res.json();
         }
@@ -345,6 +360,7 @@ class PuzzleItem{
     answer_type: number = 0;
     answer: string = "";
     jump_keyword: string = "";
+    extend_content: string = "";
 
     constructor(obj?: any) {
         if (obj) Object.assign(this, obj);

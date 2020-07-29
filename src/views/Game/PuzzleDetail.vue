@@ -40,6 +40,12 @@
                         <h1>{{ puzzle.title }}</h1>
                         <div v-html="puzzle.renderHtml"></div>
                     </div>
+                    <el-card v-if="puzzle.is_finish == 1 && puzzle.extend_content && puzzle.extend_content != ''">
+                        <div slot="header">
+                            隐藏的内容
+                        </div>
+                        <div v-html="puzzle.renderedExtendHtml"></div>
+                    </el-card>
                     <div class="puzzle-main">
                         <div v-if="puzzle.type == 0">
                             <img :src="puzzle.image">
@@ -129,6 +135,10 @@ export default class PuzzleDetailView extends Vue {
                 title: "答题结果",
                 type
             });
+
+            if(data.extend_flag == 16){
+                this.$gConst.globalBus.$emit("reload");
+            }
         }else{
             defaultApiErrorAction(this, data);
         }
@@ -169,11 +179,19 @@ class Puzzle{
     image: string = "";
     html: string = "";
     answer_type: number = 0;
+    extend_content: string = "";
+    is_finish: number = 0;
     constructor(obj?: any){
         if(obj) Object.assign(this, obj);
     }
     get renderHtml(){
         return marked(this.content);
+    }
+    get renderedExtendHtml(){
+        if(this.extend_content && this.extend_content != ""){
+            return marked(this.extend_content);
+        }
+        return "";
     }
     get groupInfo(){
         return {
@@ -224,6 +242,10 @@ class AnswerLog{
     margin-top: 100px;
     margin-bottom: 100px;
 }
+.el-card{
+    color: #ffffff;
+    border: 1px solid #464646;
+}
 </style>
 
 <style lang="scss">
@@ -249,5 +271,10 @@ class AnswerLog{
     .warning-row{
         background: #817335;
     }
+}
+.el-card__header{
+    color: #999999;
+    text-align: left;
+    font-style: italic;
 }
 </style>
