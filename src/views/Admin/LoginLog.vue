@@ -2,25 +2,14 @@
   <div class="admin-home">
     <el-container>
       <el-aside width="200px">
-        <AdminSidebar activeIndex="/userbackend/answerlog"></AdminSidebar>
+        <AdminSidebar activeIndex="/userbackend/loginlog"></AdminSidebar>
       </el-aside>
       <el-main>
-        <h1>答案记录</h1>
+        <h1>登录记录</h1>
         <el-row>
-            <el-col :span="2">队伍：</el-col>
-            <el-col :span="4">
-                <el-select v-model="queryAnswerLog.gid" multiple filterable placeholder="全部队伍">
-                    <el-option
-                        v-for="g in userList.gid_item"
-                        :key="g.gid"
-                        :label="g.groupDisplayName"
-                        :value="g.gid">
-                    </el-option>
-                </el-select>
-            </el-col>
             <el-col :span="2">用户：</el-col>
             <el-col :span="4">
-                <el-select v-model="queryAnswerLog.uid" multiple filterable placeholder="全部用户">
+                <el-select v-model="queryLoginLog.uid" multiple filterable placeholder="全部用户">
                     <el-option
                         v-for="u in userList.uid_item"
                         :key="u.uid"
@@ -29,20 +18,9 @@
                     </el-option>
                 </el-select>
             </el-col>
-            <el-col :span="2">题目：</el-col>
+            <el-col :span="2">登录状态：</el-col>
             <el-col :span="4">
-                <el-select v-model="queryAnswerLog.pid" multiple filterable placeholder="任意题目">
-                    <el-option
-                        v-for="p in userList.pid_item"
-                        :key="p.pid"
-                        :label="p.puzzle_name"
-                        :value="p.pid">
-                    </el-option>
-                </el-select>
-            </el-col>
-            <el-col :span="2">答案状态：</el-col>
-            <el-col :span="4">
-                <el-select v-model="queryAnswerLog.status" multiple placeholder="全部">
+                <el-select v-model="queryLoginLog.status" multiple placeholder="全部">
                     <el-option
                         v-for="s in userList.status_item"
                         :key="s.status"
@@ -51,43 +29,50 @@
                     </el-option>
                 </el-select>
             </el-col>
+            <el-col :span="2">登录E-mail：</el-col>
+            <el-col :span="4">
+                <el-input v-model="queryLoginLog.email"></el-input>
+            </el-col>
+            <el-col :span="2">登录IP：</el-col>
+            <el-col :span="4">
+                <el-input v-model="queryLoginLog.ip"></el-input>
+            </el-col>
         </el-row>
         <el-row>
-            <el-col :span="2">答案匹配：</el-col>
+            <el-col :span="2">USERID：</el-col>
             <el-col :span="6">
-                <el-input v-model="queryAnswerLog.answer"></el-input>
+                <el-input v-model="queryLoginLog.userid"></el-input>
             </el-col>
             <el-col :span="2"><span>时间排序：</span></el-col>
             <el-col :span="4">
-                <el-select placeholder="选择排序" v-model="queryAnswerLog.order">
+                <el-select placeholder="选择排序" v-model="queryLoginLog.order">
                     <el-option label="最新在前" :value="0"></el-option>
                     <el-option label="最老在前" :value="1"></el-option>
                 </el-select>
             </el-col>
             <el-col :span="2" :offset="2">
-                <el-button type="info" icon="el-icon-search" @click="loadAnswerLog(1)">查询</el-button>
+                <el-button type="info" icon="el-icon-search" @click="loadLoginLog(1)">查询</el-button>
             </el-col>
         </el-row>
-        <el-table :data="answerLog" class="answer-log-table">
+        <el-table :data="loginLog" class="answer-log-table">
             <el-table-column label="ID" prop="id" width="100px"></el-table-column>
-            <el-table-column label="回答时间" prop="formatedDate"></el-table-column>
-            <el-table-column label="组队">
-                <template slot-scope="u">
-                    <el-button type="text" @click="setGroup(u.row.gid)">{{getGroupName(u.row.gid)}}</el-button>
-                </template>
-            </el-table-column>
+            <el-table-column label="登录时间" prop="formatedDate"></el-table-column>
+            <el-table-column label="E-mail" prop="email"></el-table-column>
             <el-table-column label="用户">
                 <template slot-scope="u">
-                    <el-button type="text" @click="setUser(u.row.uid)">{{getUserName(u.row.uid)}}</el-button>
+                    <el-tooltip placement="bottom" effect="dark">
+                        <div slot="content">
+                            附加信息<br>
+                            PROXY_IP: {{u.row.proxy_ip}}<br>
+                            UA: {{u.row.useragent}}
+                        </div>
+                        <el-button type="text" @click="setUser(u.row.uid)">{{ u.row.username }}</el-button>
+                    </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column label="题目">
-                <template slot-scope="u">
-                    <el-button type="text" @click="setPuzzle(u.row.pid)">{{getPuzzleName(u.row.pid)}}</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="答案" prop="answer"></el-table-column>
-            <el-table-column label="判断状态">
+            <el-table-column label="IP" prop="ip"></el-table-column>
+            <el-table-column label="USERID" prop="userid"></el-table-column>
+            <el-table-column label="状态">
                 <template slot-scope="u">
                     <span :style="'color:' + getStatusClass(u.row.status)">{{getStatusName(u.row.status)}}</span>
                 </template>
@@ -98,7 +83,7 @@
                 layout="prev, pager, next"
                 :total="totalCount"
                 :page-size.sync="pageSize"
-                @current-change="loadAnswerLog">
+                @current-change="loadLoginLog">
             </el-pagination>
         </div>
       </el-main>
@@ -117,14 +102,14 @@ import { formatTimestamp } from '@/utils/formatDate';
     AdminSidebar
   }
 })
-export default class AnswerLogView extends Vue {
+export default class LoginLogView extends Vue {
     userList: UserList = new UserList();
-    queryAnswerLog: QueryAnswerLog = new QueryAnswerLog();
-    answerLog: AnswerLog[] = [];
+    queryLoginLog: QueryLoginLog = new QueryLoginLog();
+    loginLog: LoginLog[] = [];
     pageSize: number = 20;
     totalCount: number = 0;
     async mounted(){
-        let grpapi = this.$gConst.apiRoot + "/admin/get-user-list";
+        let grpapi = this.$gConst.apiRoot + "/admin/get-l-user-list";
         let grpres = await fetchPostWithSign(grpapi, {});
         let grpdata = await grpres.json();
 
@@ -135,53 +120,37 @@ export default class AnswerLogView extends Vue {
             this.$router.push("/");
         }
 
-        this.loadAnswerLog(1);
+        this.loadLoginLog(1);
     }
-    async loadAnswerLog(page: number = 1){
-        let api = this.$gConst.apiRoot + "/admin/query-answer-log";
-        this.queryAnswerLog.page = page;
-        let res = await fetchPostWithSign(api, this.queryAnswerLog);
+    async loadLoginLog(page: number = 1){
+        let api = this.$gConst.apiRoot + "/admin/query-login-log";
+        this.queryLoginLog.page = page;
+        let res = await fetchPostWithSign(api, this.queryLoginLog);
         let data = await res.json();
 
         if (data["status"] == 1) {
             this.pageSize = data.page_size;
             this.totalCount = data.total_count;
-            if (data.answer_log) {
-                let answerList: AnswerLog[] = [];
+            if (data.login_log) {
+                let loginList: LoginLog[] = [];
 
-                for(let answer of data.answer_log){
-                    answerList.push(new AnswerLog(answer));
+                for(let loginItem of data.login_log){
+                    loginList.push(new LoginLog(loginItem));
                 }
-                this.answerLog = answerList;
+                this.loginLog = loginList;
             }
         } else {
             defaultApiErrorAction(this, data);
             this.$router.push("/");
         }
     }
-    setGroup(gid: number){
-        this.queryAnswerLog.gid = [gid];
-    }
     setUser(uid: number){
-        this.queryAnswerLog.uid = [uid];
-    }
-    setPuzzle(pid: number){
-        this.queryAnswerLog.pid = [pid];
+        this.queryLoginLog.uid = [uid];
     }
     getUserName(uid: number){
         let u = this.userList.uid_item.find(it => it.uid == uid);
         if(u) return u.user_name;
         else return uid;
-    }
-    getGroupName(gid: number){
-        let g = this.userList.gid_item.find(it => it.gid == gid);
-        if(g) return g.group_name;
-        else return gid;
-    }
-    getPuzzleName(pid: number){
-        let p = this.userList.pid_item.find(it => it.pid == pid);
-        if(p) return p.puzzle_name;
-        else return pid;
     }
     getStatusName(status: number){
         let s = this.userList.status_item.find(it => it.status == status);
@@ -193,30 +162,34 @@ export default class AnswerLogView extends Vue {
             case 1: return "#3af73a";
             case 2: return "#f73939";
             case 3: return "#206af3";
-            case 6: return "#f5a52e";
+            case 4: return "#206af3";
+            case 5: return "#f5a52e";
             default: return "#cccccc";
         }
     }
 }
 
-class QueryAnswerLog{
+class QueryLoginLog{
     uid: number[] = [];
-    gid: number[] = [];
-    pid: number[] = [];
     status: number[] = [];
-    answer: string = "";
+    email: string = "";
+    ip: string = "";
+    userid: string = "";
     order: number = 0;
     page: number = 1;
 }
 
-class AnswerLog{
+class LoginLog{
     id: number = 0;
     create_time: number = 0;
+    email: string = "";
+    username: string = "";
     uid: number = 0;
-    gid: number = 0;
-    pid: number = 0;
-    answer: string = "";
     status: number = 0;
+    ip: string = "";
+    proxy_ip: string = "";
+    useragent: string = "";
+    userid: number = 0;
 
     constructor(obj?: any){
         if(obj) Object.assign(this, obj);
@@ -233,28 +206,24 @@ class UserList{
     status_item: {status: number, label: string}[] = [
         {
             status: 1,
-            label: "OK"
+            label: "登录成功"
         },
         {
             status: 2,
-            label: "WA"
+            label: "请求无效"
         },
         {
             status: 3,
-            label: "CLD"
+            label: "用户名错误"
         },
         {
             status: 4,
-            label: "HIDE"
+            label: "密码错误"
         },
         {
             status: 5,
-            label: "ERR"
-        },
-        {
-            status: 6,
-            label: "JUMP"
-        },
+            label: "无权限"
+        }
     ];
 
     constructor(obj?: any){

@@ -23,7 +23,7 @@
             </div>
         </el-drawer>
     </BottomNavbar>
-    <el-dialog title="回答记录" :visible.sync="answerLogDialog">
+    <el-dialog title="回答记录" :visible.sync="answerLogDialog" width="90%">
         <el-table :data="answerLog" :row-class-name="answerLogRowClassName">
             <el-table-column property="formatedDate" label="回答时间"></el-table-column>
             <el-table-column property="user_name" label="回答者"></el-table-column>

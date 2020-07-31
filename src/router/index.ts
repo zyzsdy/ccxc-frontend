@@ -79,6 +79,11 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/AnswerLog.vue')
   },
   {
+    path: '/userbackend/loginlog',
+    name: 'LoginLog',
+    component: () => import(/* webpackChunkName: "userbackend" */ '../views/Admin/LoginLog.vue')
+  },
+  {
     path: '/userbackend/announcement',
     name: 'AnnouncementAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/Announcement.vue')
@@ -87,6 +92,11 @@ Vue.use(VueRouter)
     path: '/userbackend/user',
     name: 'UserAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/UserAdmin.vue')
+  },
+  {
+    path: '/userbackend/group',
+    name: 'GroupAdmin',
+    component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/GroupAdmin.vue')
   },
   {
     path: '/userbackend/puzzlegroup',
