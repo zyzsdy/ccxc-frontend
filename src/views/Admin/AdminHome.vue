@@ -5,7 +5,8 @@
         <AdminSidebar activeIndex="/userbackend"></AdminSidebar>
       </el-aside>
       <el-main>
-        Main
+        <h1>CCXC 后台</h1>
+        <div v-html="overviewHtml"></div>
       </el-main>
     </el-container>
   </div>
@@ -21,5 +22,19 @@ import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost'
     AdminSidebar
   }
 })
-export default class AdminHomeView extends Vue {}
+export default class AdminHomeView extends Vue {
+  overviewHtml: string = "";
+  async mounted(){
+    let grpapi = this.$gConst.apiRoot + "/admin/overview";
+    let grpres = await fetchPostWithSign(grpapi, {});
+    let grpdata = await grpres.json();
+
+    if (grpdata["status"] == 1) {
+        this.overviewHtml = grpdata.result;
+    } else {
+        defaultApiErrorAction(this, grpdata);
+        this.$router.push("/");
+    }
+  }
+}
 </script>

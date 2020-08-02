@@ -45,10 +45,6 @@ export default class HomeView extends Vue {
     }else{
       defaultApiErrorAction(this, data);
     }
-
-    (globalThis as any).start = () => {
-      this.startGame()
-    }
   }
   get isFinishCountdown(){
     let nowtime = new Date().getTime();

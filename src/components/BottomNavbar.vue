@@ -22,7 +22,7 @@
           <el-menu mode="horizontal" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="right-menu" :router="true">
               <el-submenu index="system-menu">
                   <template slot="title"><i class="el-icon-menu"></i></template>
-                  <el-menu-item @click="showMailbox">信箱<span class="new-badge" v-if="newMessage != 0">{{ newMessage }}</span></el-menu-item>
+                  <el-menu-item @click="showMailbox()">信箱<span class="new-badge" v-if="newMessage != 0">{{ newMessage }}</span></el-menu-item>
                   <el-menu-item @click="showInfo">显示答题信息</el-menu-item>
                   <el-menu-item index="/">返回主页</el-menu-item>
               </el-submenu>
@@ -31,7 +31,7 @@
       </el-col>
     </el-row>
     <el-dialog title="信箱" :visible.sync="showMailBoxDialog" width="90%" :modal-append-to-body="false">
-      <MessageBox></MessageBox>
+      <MessageBox :initMail="initMail"></MessageBox>
     </el-dialog>
   </el-header>
 </template>
@@ -50,6 +50,7 @@ import 'element-ui/lib/theme-chalk/display.css';
 export default class BottomNavbar extends Vue {
     @Prop() private activeIndex!: string
     @Prop() private activeGroup!: {pgid: number, pg_name: string}
+    initMail: string = "";
     showMailBoxDialog: boolean = false;
     newMessage: number = 0;
     mounted(){
@@ -63,6 +64,10 @@ export default class BottomNavbar extends Vue {
       this.$gConst.globalBus.$on("new-message", (data: number) => {
         this.newMessage = data;
       });
+
+      (globalThis as any).page_script = {
+        upload: this.upload
+      };
     }
     get innerGroup(){
       if(this.activeGroup) return this.activeGroup;
@@ -79,7 +84,14 @@ export default class BottomNavbar extends Vue {
     get username(){
       return localStorage.getItem("username") || "[空名称][NULL]";
     }
-    showMailbox(){
+    showMailbox(message?: string){
+      if(message){
+        this.initMail = message;
+      }
+      else{
+        this.initMail = "";
+      }
+      
       this.showMailBoxDialog = true;
       this.newMessage = 0;
     }
@@ -107,6 +119,61 @@ export default class BottomNavbar extends Vue {
       } else {
         defaultApiErrorAction(this, data);
       }
+    }
+    async upload(file: File, template: string, uploadProgressCb: any){
+      let prepareApi = this.$gConst.apiRoot + "/admin/upload-prepare";
+      let prepareRes = await fetchPostWithSign(prepareApi, {});
+      let prepareData = await prepareRes.json();
+
+      if (prepareData["status"] != 1) {
+        defaultApiErrorAction(this, prepareData);
+        this.$message.error("上传失败");
+        return;
+      }
+
+      let uploadToken = prepareData["upload_token"];
+
+      //使用form-data上传图片
+      let formData = new FormData();
+      formData.append("file", file);
+
+      let uploadApi = this.$gConst.apiRoot + "/admin/upload-image";
+      let xhr = new XMLHttpRequest();
+      xhr.open("POST", uploadApi);
+      xhr.setRequestHeader("Upload-Token", uploadToken);
+      xhr.onerror = e => {
+        this.$message({
+          type: "error",
+          message: "服务器通信异常"
+        });
+        throw e;
+      }
+
+      let self = this;
+      if(uploadProgressCb){
+        if(xhr.upload) xhr.upload.onprogress = uploadProgressCb;
+        else if(xhr.onprogress) xhr.onprogress = uploadProgressCb;
+      }
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState == 4){
+          var dataJson = xhr.responseText;
+          var data = JSON.parse(dataJson);
+
+          if(data["status"] != 1){
+            defaultApiErrorAction(self, data);
+          } else {
+            this.$message({
+              type: "success",
+              message: "上传成功"
+            });
+            let url = data["image_path"];
+            let message = template.replace("${url}", url);
+
+            this.showMailbox(message);
+          }
+        }
+      }
+      xhr.send(formData);
     }
 }
 

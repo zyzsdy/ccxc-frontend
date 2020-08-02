@@ -50,7 +50,7 @@
                         <div v-if="puzzle.type == 0">
                             <img :src="puzzle.image">
                         </div>
-                        <div v-if="puzzle.type == 1" v-html="puzzle.html">
+                        <div ref="puzzleHtml" v-if="puzzle.type == 1" v-html="puzzle.html">
 
                         </div>
                     </div>
@@ -99,6 +99,18 @@ export default class PuzzleDetailView extends Vue {
         if(data['status'] == 1){
             if(data.puzzle){
                 this.puzzle = new Puzzle(data.puzzle);
+
+                if(this.puzzle.type == 1){ //HTML
+                    let html = this.puzzle.html;
+                    let puzzleScript = html.replace(/<script.*?>([\s\S]+?)<\/script>/, (_, js) => {
+                        this.$nextTick(() => {
+                            var ele = document.createElement("script");
+                            ele.innerHTML = js;
+                            (this.$refs["puzzleHtml"] as any).append(ele);
+                        });
+                        return "";
+                    });
+                }
             }
         }else{
             defaultApiErrorAction(this, data);

@@ -50,7 +50,8 @@ import marked from "marked";
     }
 })
 export default class MessageBox extends Vue{
-    newMail: string = "";
+    @Prop() initMail!: string;
+    newMail: string = this.initMail;
     nowPage: number = 0;
     totalCount: number = 0;
     isLoading: boolean = false;
