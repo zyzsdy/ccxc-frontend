@@ -127,6 +127,11 @@ Vue.use(VueRouter)
     path: '/finalend',
     name: 'FinalEnd',
     component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/FinalEnd.vue')
+  },
+  {
+    path: '/prologue',
+    name: 'Prologue',
+    component: () => import(/* webpackChunkName: "game-main" */ '../views/Game/Prologue.vue')
   }
 ]
 

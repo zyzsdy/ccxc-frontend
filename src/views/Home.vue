@@ -83,7 +83,12 @@ export default class HomeView extends Vue {
     let data = await res.json();
 
     if(data['status'] == 1){
-      this.$router.push('/puzzlegrouplist');
+      if(localStorage.getItem("prologue") == "o"){
+        this.$router.push('/puzzlegrouplist');
+      }else{
+        this.$router.push('/prologue');
+      }
+      
     }else{
       defaultApiErrorAction(this, data);
     }
