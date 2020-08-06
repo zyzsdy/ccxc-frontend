@@ -7,6 +7,11 @@
                   <el-menu-item index="/about">关于CCBC X</el-menu-item>
                   <el-menu-item index="/announcement">公告</el-menu-item>
                   <el-menu-item index="/scoreboard">排行榜</el-menu-item>
+                  <el-submenu index="/tools">
+                    <template slot="title">工具</template>
+                    <el-menu-item @click="jumpP1">密码机器</el-menu-item>
+                    <el-menu-item @click="jumpP2">不暴力不成活</el-menu-item>
+                  </el-submenu>
                   <el-menu-item index="/userbackend" v-if="isAdmin"><el-tag type="danger" effect="dark">出题组后台</el-tag></el-menu-item>
             </el-menu>
             <el-menu mode="horizontal" :default-active="activeIndex" background-color="#555555" text-color="#FFFFFF" active-text-color="#F561A4" class="left-menu hidden-md-and-up" :router="true">
@@ -16,6 +21,11 @@
                     <el-menu-item index="/about">关于CCBC X</el-menu-item>
                     <el-menu-item index="/announcement">公告</el-menu-item>
                     <el-menu-item index="/scoreboard">排行榜</el-menu-item>
+                    <el-submenu index="/tools">
+                    <template slot="title">工具</template>
+                      <el-menu-item @click="jumpP1">密码机器</el-menu-item>
+                      <el-menu-item @click="jumpP2">不暴力不成活</el-menu-item>
+                    </el-submenu>
                     <el-menu-item index="/userbackend" v-if="isAdmin"><el-tag type="danger" effect="dark">出题组后台</el-tag></el-menu-item>
                   </el-submenu>
             </el-menu>
@@ -77,6 +87,20 @@ export default class TopNavbar extends Vue {
       }else{
         defaultApiErrorAction(this, data);
       }
+    }
+    jumpP1(){
+      this.jumpP("https://www.ccbcarchive.com/tool/index(old).html");
+    }
+    jumpP2(){
+      this.jumpP("https://www.ccbcarchive.com/tool/puzzlecalculator(old).htm");
+    }
+    jumpP(url: string){
+      let a = document.createElement("a");
+      a.setAttribute("href", url);
+      a.setAttribute("target", "_blank");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
 }
 </script>

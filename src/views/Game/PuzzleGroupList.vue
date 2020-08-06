@@ -9,7 +9,14 @@
                     <div><h1>选择区域</h1></div>
                     <div class="puzzle-group-list">
                         <div class="puzzle-group" :class="g.statusClass" v-for="g in puzzleGroupListInfo.puzzleGroups" :key="g.pgid" @click="showgroupdetail(g.pgid)">
+                            <div class="puzzle-difficulty">
+                                <el-tooltip effect="dark" content="难度等级" placement="bottom">
+                                    <el-rate v-model="g.difficulty" disabled :max="g.difficulty"></el-rate>
+                                </el-tooltip>
+                            </div>
+                            <div class="puzzle-group-name">
                             {{ g.pg_name }}
+                            </div>
                         </div>
                     </div>
                     <div class="puzzle-group-list" v-if="puzzleGroupListInfo.isOpenPreFinal">
@@ -177,6 +184,7 @@ class PuzzleGroupListInfo{
 class PuzzleGroup{
     pgid: number = 0;
     pg_name: string = "";
+    difficulty: number = 0;
     isHide: boolean = false;
     isFinish: boolean = false;
     isOpen: boolean = false;
@@ -272,5 +280,9 @@ class Puzzle{
     border-color: #6DCC8E;
     background-color: #6DCC8E;
     color: black;
+}
+.puzzle-difficulty{
+    position: absolute;
+    padding-left: 20px;
 }
 </style>
