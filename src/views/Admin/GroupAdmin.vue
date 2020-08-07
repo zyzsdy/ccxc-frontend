@@ -26,7 +26,7 @@
                       创建时间: {{u.row.formatedCreateTime}}
                     </div>
                     <div>
-                      <div>{{u.row.groupname}}</div>
+                      <div class="group-title">{{u.row.groupname}}</div>
                       <div class="group-profile">{{u.row.profile}}</div>
                     </div>
                 </el-tooltip>
@@ -324,8 +324,20 @@ class PuzzleGroup{
 </script>
 
 <style lang="scss" scoped>
+.group-title{
+    overflow: hidden;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 .group-profile{
     color: #999999;
+    overflow: hidden;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .message-side-preview{
     padding: 20px;

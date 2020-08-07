@@ -13,7 +13,7 @@
                 <el-table-column type="index" label="排名"></el-table-column>
                 <el-table-column label="队伍">
                     <template slot-scope="u">
-                        <div>{{u.row.group_name}}</div>
+                        <div class="group-title">{{u.row.group_name}}</div>
                         <div class="group-profile">{{u.row.group_profile}}</div>
                     </template>
                 </el-table-column>
@@ -27,7 +27,7 @@
             <el-table :data="groups">
                 <el-table-column label="队伍">
                     <template slot-scope="u">
-                        <div>{{u.row.group_name}}</div>
+                        <div class="group-title">{{u.row.group_name}}</div>
                         <div class="group-profile">{{u.row.group_profile}}</div>
                     </template>
                 </el-table-column>
@@ -111,7 +111,19 @@ class ScoreBoardItem {
 </script>
 
 <style lang="scss" scoped>
+.group-title{
+    overflow: hidden;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 .group-profile{
     color: #999999;
+    overflow: hidden;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 </style>
