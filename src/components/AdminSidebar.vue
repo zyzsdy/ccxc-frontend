@@ -2,7 +2,7 @@
   <div>
     <el-menu class="right-navbar" :default-active="activeIndex" text-color="#FFFFFF" active-text-color="#F561A4" :router="true">
         <el-menu-item-group>
-            <template slot="title">CCBC X 后台</template>
+            <template slot="title">CCBC 11 后台</template>
             <el-menu-item index="/userbackend">概览</el-menu-item>
             <el-menu-item index="/userbackend/answerlog">答案记录</el-menu-item>
         </el-menu-item-group>

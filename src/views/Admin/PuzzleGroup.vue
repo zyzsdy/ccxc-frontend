@@ -64,6 +64,22 @@
             </el-table-column>
           </el-table>
         </div>
+
+        <div>
+          <h3>可访问分组控制</h3>
+          <el-alert
+            title="通过此处控制答题者在8x8格子里能看到的题目组数。当前值为1时，可以看到分组1内的小题，当前值为2时可以看到分组1和2的小题，当前值为3时可以看到分组1、2、3的小题。"
+            description="每隔24小时，或是有队伍通过meta，此处的分组控制值都会自动增加1。"
+            type="info"
+            effect="dark"
+            show-icon
+            :closable="false"
+          ></el-alert>
+          <h2>当前值： {{ avaliableGroupId }}</h2>
+          <el-button type="primary" @click="setAvaliableGroupId(1)">1</el-button>
+          <el-button type="primary" @click="setAvaliableGroupId(2)">2</el-button>
+          <el-button type="primary" @click="setAvaliableGroupId(3)">3</el-button>
+        </div>
       </el-main>
     </el-container>
   </div>
@@ -85,6 +101,7 @@ export default class PuzzleGroupView extends Vue {
     pgList: PuzzleGroupItem[] = [];
     previewVisible: boolean = false;
     previewHtml: string = "";
+    avaliableGroupId: number = 1;
     setNew() {
         this.editingPuzzleGroupItem = new PuzzleGroupItem();
     }
@@ -106,6 +123,7 @@ export default class PuzzleGroupView extends Vue {
                 }
                 this.pgList = newPgList;
             }
+            this.avaliableGroupId = data["avaliable_group_id"];
         } else {
             defaultApiErrorAction(this, data);
             this.$router.push("/");
@@ -167,6 +185,23 @@ export default class PuzzleGroupView extends Vue {
             this.$message({
                 type: "success",
                 message: "删除成功"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        } else {
+            defaultApiErrorAction(this, data);
+        }
+    }
+    async setAvaliableGroupId(value: number) {
+        let api = this.$gConst.apiRoot + "/admin/set-avaliable-group-id";
+        let res = await fetchPostWithSign(api, {
+            value
+        });
+        let data = await res.json();
+
+        if (data["status"] == 1) {
+            this.$message({
+                type: "success",
+                message: "修改成功"
             });
             this.$gConst.globalBus.$emit("reload");
         } else {

@@ -4,7 +4,7 @@
     <el-row>
       <el-col :sm="24" :md="{span: 12, offset: 6}">
         <div class="title-logo" v-if="isFinishCountdown" @click="startGame">
-          CCBC X
+          START
         </div>
         <div v-else>
           <div class="countdown hidden-sm-and-down">{{countdown}}</div>
@@ -32,7 +32,7 @@ import { fetchPost, fetchPostWithSign, defaultApiErrorAction } from '@/utils/fet
 })
 export default class HomeView extends Vue {
   countdown: string = "0d 00:00:00";
-  endTimestamp: number = 1596801600000;
+  endTimestamp: number = 1628251200000;
   async mounted(){
     this.startCountdown();
 
@@ -83,11 +83,15 @@ export default class HomeView extends Vue {
     let data = await res.json();
 
     if(data['status'] == 1){
-      if(localStorage.getItem("prologue") == "o"){
-        this.$router.push('/puzzlegrouplist');
-      }else{
-        this.$router.push('/prologue');
-      }
+      let dest = this.$gConst.puzzleRoot + `/start?letter=${data["ticket"]}`;
+
+      window.open(dest, "_blank");
+
+      // if(localStorage.getItem("prologue") == "o"){
+      //   this.$router.push('/puzzlegrouplist');
+      // }else{
+      //   this.$router.push('/prologue');
+      // }
       
     }else{
       defaultApiErrorAction(this, data);

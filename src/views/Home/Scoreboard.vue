@@ -4,11 +4,11 @@
     <el-row>
       <el-col :sm="24" :md="{span: 12, offset: 6}">
         <h1>排行榜</h1>
-        <p>注：排行榜中得分仅供参考，排名规则不是按照得分排序的，详情请参考<router-link to="/about">关于CCBC X</router-link>中的说明。</p>
+        <p>注：排行榜中得分仅供参考，排名规则不是按照得分排序的，详情请参考<router-link to="/about">关于CCBC 11</router-link>中的说明。</p>
 
         <div v-if="finishGroups.length > 0">
             <h3>完赛队伍</h3>
-            <p>恭喜以下这些队伍完成了CCBC X的全部赛程。请注意：由于罚时的存在，排名可能还会变化。</p>
+            <p>恭喜以下这些队伍完成了CCBC 11的全部赛程。请注意：这不是最终的排名，随着比赛的进行，排名可能还会变化。</p>
             <el-table :data="finishGroups">
                 <el-table-column type="index" label="排名"></el-table-column>
                 <el-table-column label="队伍">
@@ -40,7 +40,7 @@
             <ul>
                 <li>成功解出题目会获得得分，请注意得分并非最终排名依据，仅供显示实时排行榜。</li>
                 <li>更快解答出题目会获得更高得分，此外，Meta题目的得分比普通题目更多。</li>
-                <li>如果你的队伍已经完赛，你仍然可以继续解题并获得得分，但是新增的分数会减半。</li>
+                <li>如果你的队伍已经完赛，你仍然可以继续解题并获得得分，这不会影响你的（和/或其他人的）队伍排名</li>
             </ul>
         </div>
       </el-col>

@@ -53,6 +53,12 @@
                 </el-col>
             </el-row>
             <el-row>
+                <el-col :span="2"><span>题目位置：</span></el-col>
+                <el-col :span="4">
+                    <el-input v-model="editingPuzzleItem.extend_data" placeholder="0,0 (row, col)"></el-input>
+                </el-col>
+            </el-row>
+            <el-row>
                 <el-col :span="2">
                     <span>题目内容：</span>
                 </el-col>
@@ -105,6 +111,94 @@
                     <el-input v-model="editingPuzzleItem.jump_keyword"></el-input>
                 </el-col>
             </el-row>
+            <el-row>
+                <el-col :span="2"><span>提示1标题：</span></el-col>
+                <el-col :span="6">
+                    <el-input v-model="editingPuzzleItem.tips1title"></el-input>
+                </el-col>
+                <el-col :span="2"><span>提示2标题：</span></el-col>
+                <el-col :span="6">
+                    <el-input v-model="editingPuzzleItem.tips2title"></el-input>
+                </el-col>
+                <el-col :span="2"><span>提示3标题：</span></el-col>
+                <el-col :span="6">
+                    <el-input v-model="editingPuzzleItem.tips3title"></el-input>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2"><span>提示1：</span></el-col>
+                <el-col :span="6">
+                    <el-input 
+                    type="textarea"
+                    placeholder=""
+                    v-model="editingPuzzleItem.tips1"
+                    :autosize="{minRows: 5}">
+                    </el-input>
+                </el-col>
+                <el-col :span="2"><span>提示2：</span></el-col>
+                <el-col :span="6">
+                    <el-input 
+                    type="textarea"
+                    placeholder=""
+                    v-model="editingPuzzleItem.tips2"
+                    :autosize="{minRows: 5}">
+                    </el-input>
+                </el-col>
+                <el-col :span="2"><span>提示3：</span></el-col>
+                <el-col :span="6">
+                    <el-input 
+                    type="textarea"
+                    placeholder=""
+                    v-model="editingPuzzleItem.tips3"
+                    :autosize="{minRows: 5}">
+                    </el-input>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :offset="2">
+                    <el-button type="info" icon="el-icon-circle-plus-outline" @click="openAdditionalAnswerDrawer">添加附加答案</el-button>
+                    <el-tooltip effect="dark" class="question-mark-item"
+                        content="附加答案为判题时提供额外的错误答案，当参赛者输入匹配到附加答案的答案时，虽然不是正确答案，但是在返回结果中可以带上一段特定的消息"
+                        placement="bottom-start">
+                        <i class="el-icon-question"></i>
+                    </el-tooltip>
+                    <el-drawer :title="'附加参考答案：' + editingPuzzleItem.pid" :visible.sync="additionAnswerDrawerOpened" direction="rtl" size="50%" @open="additionAnswerDrawerOpenAction">
+                        <div class="additional-drawer-content">
+                            <h3 v-if="editingAdditionalAnswerItem.aaid == 0">添加附加答案</h3>
+                            <h3 v-else>编辑附加答案：{{editingAdditionalAnswerItem.answer}}</h3>
+                            <el-row>
+                                <el-col :span="3">答案：</el-col>
+                                <el-col :span="21">
+                                    <el-input v-model="editingAdditionalAnswerItem.answer"></el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="3">消息：</el-col>
+                                <el-col :span="21">
+                                    <el-input type="textarea" :autosize="{minRows: 5}" v-model="editingAdditionalAnswerItem.message"></el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col>
+                                    <el-button type="primary" @click="addOrSaveAdditionalAnswer">提交</el-button>
+                                    <el-button type="success" @click="setNewAdditionalAnswer">新建</el-button>
+                                </el-col>
+                            </el-row>
+                            <h3>已有附加答案</h3>
+                            <el-table :data="additionAnswerList">
+                                <el-table-column label="答案" prop="answer" width="200px"></el-table-column>
+                                <el-table-column label="消息" prop="message"></el-table-column>
+                                <el-table-column label="操作" width="150px">
+                                    <template slot-scope="u">
+                                        <el-button type="success" size="small" @click="editAdditionalAnswer(u.row.aaid)">编辑</el-button>
+                                        <el-button type="danger" size="small" @click="deleteAdditionalAnswer(u.row.aaid)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-drawer>
+                </el-col>
+            </el-row>
           </div>
           <div style="margin-top: 10px">
             <el-button type="primary" @click="addOrSavePuzzle">提交</el-button>
@@ -122,6 +216,7 @@
                     {{ getPuzzleGroupName(u.row.pgid) }}
                 </template>
             </el-table-column>
+            <el-table-column label="题目位置" prop="extend_data"></el-table-column>
             <el-table-column label="题目" prop="title"></el-table-column>
             <el-table-column label="类型">
                 <template slot-scope="u">
@@ -187,10 +282,6 @@ export default class PuzzleView extends Vue {
             label: "区域Meta"
         },
         {
-            id: 2,
-            label: "FM准入"
-        },
-        {
             id: 3,
             label: "FinalMeta"
         },
@@ -201,6 +292,9 @@ export default class PuzzleView extends Vue {
     ];
     previewVisible: boolean = false;
     previewHtml: string = "";
+    additionAnswerDrawerOpened: boolean = false;
+    additionAnswerList: AdditionalAnswer[] = [];
+    editingAdditionalAnswerItem: AdditionalAnswer = new AdditionalAnswer();
     setNew() {
         this.editingPuzzleItem = new PuzzleItem();
     }
@@ -292,7 +386,14 @@ export default class PuzzleView extends Vue {
                 answer_type: this.editingPuzzleItem.answer_type,
                 answer: this.editingPuzzleItem.answer,
                 jump_keyword: this.editingPuzzleItem.jump_keyword,
-                extend_content: this.editingPuzzleItem.extend_content
+                extend_content: this.editingPuzzleItem.extend_content,
+                extend_data: this.editingPuzzleItem.extend_data,
+                tips1: this.editingPuzzleItem.tips1,
+                tips2: this.editingPuzzleItem.tips2,
+                tips3: this.editingPuzzleItem.tips3,
+                tips1title: this.editingPuzzleItem.tips1title,
+                tips2title: this.editingPuzzleItem.tips2title,
+                tips3title: this.editingPuzzleItem.tips3title,
             });
             data = await res.json();
         } else {
@@ -308,7 +409,14 @@ export default class PuzzleView extends Vue {
                 answer_type: this.editingPuzzleItem.answer_type,
                 answer: this.editingPuzzleItem.answer,
                 jump_keyword: this.editingPuzzleItem.jump_keyword,
-                extend_content: this.editingPuzzleItem.extend_content
+                extend_content: this.editingPuzzleItem.extend_content,
+                extend_data: this.editingPuzzleItem.extend_data,
+                tips1: this.editingPuzzleItem.tips1,
+                tips2: this.editingPuzzleItem.tips2,
+                tips3: this.editingPuzzleItem.tips3,
+                tips1title: this.editingPuzzleItem.tips1title,
+                tips2title: this.editingPuzzleItem.tips2title,
+                tips3title: this.editingPuzzleItem.tips3title,
             });
             data = await res.json();
         }
@@ -346,6 +454,124 @@ export default class PuzzleView extends Vue {
             defaultApiErrorAction(this, data);
         }
     }
+    async reloadAdditionalAnswerList(){
+        this.additionAnswerList = [];
+
+        let api = this.$gConst.apiRoot + "/admin/get-additional-answer";
+        let res = await fetchPostWithSign(api, {
+            pid: this.editingPuzzleItem.pid
+        });
+        let data = await res.json();
+
+        if (data["status"] == 1) {
+            if (data["additional_answer"]) {
+                let newAAList: AdditionalAnswer[] = [];
+
+                for (let aaItem of data["additional_answer"]) {
+                    newAAList.push(new AdditionalAnswer(aaItem));
+                }
+                this.additionAnswerList = newAAList;
+            }
+        } else {
+            defaultApiErrorAction(this, data);
+        }
+    }
+    async additionAnswerDrawerOpenAction(){
+        await this.reloadAdditionalAnswerList();
+    }
+    async addOrSaveAdditionalAnswer(){
+        if (this.editingPuzzleItem.pid == 0){
+            this.$message({
+                type: "warning",
+                message: "请先点击编辑按钮，若您正在新建题目，必须先提交新建题目之后才能编辑附加答案。"
+            });
+            return;
+        }
+
+        if (this.editingAdditionalAnswerItem.answer == "") {
+            this.$message({
+                type: "warning",
+                message: "附加答案不能为空"
+            });
+            return;
+        }
+        if (this.editingAdditionalAnswerItem.message == "") {
+            this.$message({
+                type: "warning",
+                message: "附加答案消息不能为空"
+            });
+            return;
+        }
+
+        let data;
+        if (this.editingAdditionalAnswerItem.aaid == 0) {
+            let api = this.$gConst.apiRoot + "/admin/add-additional-answer";
+            let res = await fetchPostWithSign(api, {
+                pid: this.editingPuzzleItem.pid,
+                answer: this.editingAdditionalAnswerItem.answer,
+                message: this.editingAdditionalAnswerItem.message
+            });
+            data = await res.json();
+        } else {
+            let api = this.$gConst.apiRoot + "/admin/edit-additional-answer";
+            let res = await fetchPostWithSign(api, {
+                aaid: this.editingAdditionalAnswerItem.aaid,
+                pid: this.editingPuzzleItem.pid,
+                answer: this.editingAdditionalAnswerItem.answer,
+                message: this.editingAdditionalAnswerItem.message
+            });
+            data = await res.json();
+        }
+
+        if (data["status"] == 1) {
+            this.$message({
+                type: "success",
+                message: "编辑附加答案成功"
+            });
+            await this.reloadAdditionalAnswerList();
+            this.editingAdditionalAnswerItem = new AdditionalAnswer();
+        } else {
+            defaultApiErrorAction(this, data);
+        }
+    }
+    editAdditionalAnswer(aaid: number){
+        let additionalItem = this.additionAnswerList.find(it => it.aaid == aaid);
+        if(additionalItem) {
+            this.editingAdditionalAnswerItem = new AdditionalAnswer(additionalItem);
+        }
+    }
+    setNewAdditionalAnswer(){
+        this.editingAdditionalAnswerItem = new AdditionalAnswer();
+    }
+    async deleteAdditionalAnswer(aaid: number){
+        let api = this.$gConst.apiRoot + "/admin/delete-additional-answer";
+        let res = await fetchPostWithSign(api, {
+            aaid
+        });
+        let data = await res.json();
+
+        if (data["status"] == 1) {
+            this.$message({
+                type: "success",
+                message: "删除附加答案成功"
+            });
+            await this.reloadAdditionalAnswerList();
+            this.editingAdditionalAnswerItem = new AdditionalAnswer();
+        } else {
+            defaultApiErrorAction(this, data);
+        }
+    }
+    openAdditionalAnswerDrawer(){
+        if (this.editingPuzzleItem.pid == 0){
+            this.$message({
+                type: "warning",
+                message: "请先点击编辑按钮，若您正在新建题目，必须先提交新建题目之后才能编辑附加答案。"
+            });
+            return;
+        }
+
+        this.additionAnswerDrawerOpened = true;
+    }
 }
 
 class PuzzleItem{
@@ -361,6 +587,13 @@ class PuzzleItem{
     answer: string = "";
     jump_keyword: string = "";
     extend_content: string = "";
+    extend_data: string = "";
+    tips1: string = "";
+    tips2: string = "";
+    tips3: string = "";
+    tips1title: string = "";
+    tips2title: string = "";
+    tips3title: string = "";
 
     constructor(obj?: any) {
         if (obj) Object.assign(this, obj);
@@ -387,14 +620,39 @@ class PuzzleGroupItem{
         else return this.pg_name;
     }
 }
+
+class AdditionalAnswer{
+    aaid: number = 0;
+    pid: number = 0;
+    answer: string = "";
+    message: string = "";
+
+    constructor(obj?: any){
+        if (obj) Object.assign(this, obj);
+    }
+}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .info-table {
   width: 100%;
   margin-top: 20px;
 }
 .new-puzzle-area .el-row{
   margin-top: 10px;
+}
+.question-mark-item{
+  margin-left: 10px;
+  color: gray;
+}
+.additional-drawer-content{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.additional-drawer-content .el-input>.el-input__inner{
+    background-color: rgb(71,71,71);
+}
+.additional-drawer-content .el-textarea>.el-textarea__inner{
+    background-color: rgb(71,71,71);
 }
 </style>

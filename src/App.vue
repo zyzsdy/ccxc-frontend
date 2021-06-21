@@ -1,14 +1,22 @@
 <template>
-  <div id="app">
-    <router-view v-if="isRouterVisible"></router-view>
+  <div>
+    <div id="app">
+      <router-view v-if="isRouterVisible"></router-view>
+    </div>
+    <BottomBar></BottomBar>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { fetchPostWithSign, defaultApiErrorAction } from '@/utils/fetchPost';
+import BottomBar from '@/components/BottomBar.vue'
 
-@Component
+@Component({
+    components: {
+        BottomBar
+    }
+})
 export default class App extends Vue {
   isRouterVisible = true
 
@@ -88,5 +96,9 @@ body{
 
 img{
   width: 100%;
+}
+
+#app{
+  min-height: calc(100vh - 255px);
 }
 </style>
