@@ -80,6 +80,17 @@
           <el-button type="primary" @click="setAvaliableGroupId(2)">2</el-button>
           <el-button type="primary" @click="setAvaliableGroupId(3)">3</el-button>
         </div>
+
+        <div>
+          <h3>提示币价格</h3>
+          <el-row>
+            <el-col :span="2"><span>默认消耗</span></el-col>
+            <el-col :span="4"><el-input v-model="tipsCost.cost_default"></el-input></el-col>
+            <el-col :span="2"><span>Meta消耗</span></el-col>
+            <el-col :span="4"><el-input v-model="tipsCost.cost_meta"></el-input></el-col>
+            <el-button type="primary" @click="updateTipsCost">更新</el-button>
+          </el-row>
+        </div>
       </el-main>
     </el-container>
   </div>
@@ -102,6 +113,7 @@ export default class PuzzleGroupView extends Vue {
     previewVisible: boolean = false;
     previewHtml: string = "";
     avaliableGroupId: number = 1;
+    tipsCost: TipsCost = new TipsCost();
     setNew() {
         this.editingPuzzleGroupItem = new PuzzleGroupItem();
     }
@@ -124,6 +136,8 @@ export default class PuzzleGroupView extends Vue {
                 this.pgList = newPgList;
             }
             this.avaliableGroupId = data["avaliable_group_id"];
+            this.tipsCost.cost_default = data["tips_cost_default"];
+            this.tipsCost.cost_meta = data["tips_cost_meta"];
         } else {
             defaultApiErrorAction(this, data);
             this.$router.push("/");
@@ -208,6 +222,24 @@ export default class PuzzleGroupView extends Vue {
             defaultApiErrorAction(this, data);
         }
     }
+    async updateTipsCost(){
+        let api = this.$gConst.apiRoot + "/admin/update-tips-cost";
+        let res = await fetchPostWithSign(api, {
+            tips_cost_default: this.tipsCost.cost_default,
+            tips_cost_meta: this.tipsCost.cost_meta
+        });
+        let data = await res.json();
+
+        if (data["status"] == 1) {
+            this.$message({
+                type: "success",
+                message: "修改成功"
+            });
+            this.$gConst.globalBus.$emit("reload");
+        } else {
+            defaultApiErrorAction(this, data);
+        }
+    }
 }
 
 class PuzzleGroupItem{
@@ -225,6 +257,11 @@ class PuzzleGroupItem{
     get firstLine(){
         return this.pg_desc.split("\n")[0];
     }
+}
+
+class TipsCost{
+    cost_default: number = 0;
+    cost_meta: number = 0;
 }
 </script>
 
