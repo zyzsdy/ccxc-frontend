@@ -75,8 +75,7 @@ export default class App extends Vue {
     let data = await res.json();
 
     if (data["status"] == 1) {
-      localStorage.setItem("newMessage", data["new_message"]);
-      this.$gConst.globalBus.$emit("new-message", data["new_message"]);
+
     } else {
       defaultApiErrorAction(this, data);
     }
