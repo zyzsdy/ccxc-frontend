@@ -15,6 +15,7 @@
         <el-menu-item-group>
             <template slot="title">站点管理</template>
             <el-menu-item index="/userbackend/message">站内信</el-menu-item>
+            <el-menu-item index="/userbackend/tempanno">临时公告</el-menu-item>
             <el-menu-item index="/userbackend/announcement">公告</el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group>

@@ -32,7 +32,6 @@
                 </el-tooltip>
               </template>
           </el-table-column>
-          <el-table-column label="开放分区" prop="opened_puzzle_groups"></el-table-column>
           <el-table-column label="完成题目数量" prop="finished_puzzle_count"></el-table-column>
           <el-table-column label="得分" prop="score" :formatter="digits2"></el-table-column>
           <el-table-column label="是否完赛">
@@ -46,7 +45,7 @@
               <span v-else style="color: #999999;">未完赛</span>
             </template>
           </el-table-column>
-          <el-table-column label="罚时" prop="penalty" :formatter="digits2"></el-table-column> 
+          <el-table-column label="已使用提示币总数" prop="penalty" :formatter="digits2"></el-table-column> 
           <el-table-column label="总用时" prop="total_time" :formatter="digits2"></el-table-column> 
         </el-table>
         <el-drawer title="队伍详情" :visible.sync="groupDetailViewer" direction="rtl">
@@ -57,8 +56,8 @@
                 <div v-for="puzzlegroup in puzzleMatrix.puzzleGroups" :key="puzzlegroup.pgid+'A'+groupDetail.groupOverview.gid" class="puzzle-status-graph-line">
                   <span class="small-box" :class="getGroupStatus(puzzlegroup.pgid)">{{puzzlegroup.pgid}}</span>
                   <span class="divider"></span>
-                  <el-tooltip effect="dark" placement="bottom" v-for="puzzle in puzzlegroup.puzzles" :key="puzzle.pid" :content="puzzle.title">
-                    <span class="small-box" :class="getPuzzleStatus(puzzle.pid)" >{{puzzle.pid}}</span>
+                  <el-tooltip effect="dark" placement="bottom" v-for="puzzle in puzzlegroup.puzzles" :key="puzzle.pid" :content="getOpenTips(puzzle.pid, groupDetail.progress.data.OpenedHints)">
+                    <span class="small-box" :class="getPuzzleStatus(puzzle.pid)" >{{puzzle.tName}}</span>
                   </el-tooltip>
                 </div>
                 <p v-if="groupDetail.progress.data.IsOpenNextGroup">可以解锁下个分区</p>
@@ -183,7 +182,11 @@ export default class GroupAdminView extends Vue {
   }
   getGroupStatus(pgid: number){
     let result = "default-box";
-    if(this.groupDetail.progress.data.NowOpenPuzzleGroups.indexOf(pgid) != -1){
+
+    if (pgid == 4 && this.groupDetail.progress.data.IsOpenPreFinal){
+      result = "open-box";
+    }
+    if (pgid == 5 && this.groupDetail.progress.data.IsOpenFinalStage){
       result = "open-box";
     }
     if(this.groupDetail.progress.data.FinishedGroups.indexOf(pgid) != -1){
@@ -203,6 +206,14 @@ export default class GroupAdminView extends Vue {
 
     return result;
   }
+  getOpenTips(pid: number, openedTips: {[pid: number]: number[]}){
+    if(openedTips[pid]){
+      var f = openedTips[pid].join(",");
+      return `已开放提示：${f}`;
+    }
+
+    return "-";
+  }
 }
 
 class GroupOverview{
@@ -211,7 +222,6 @@ class GroupOverview{
   create_time: number = 0;
   profile: string = "";
   finished_puzzle_count: number = 0;
-  opened_puzzle_groups: string = "";
   score: number = 0;
   is_finish: number = 0;
   finish_time: number = 0;
@@ -280,11 +290,12 @@ class Progress{
 }
 
 class SaveData{
-  NowOpenPuzzleGroups: number[] = [];
-  FinishedGroups: number[] = [];
   FinishedPuzzles: number[] = [];
   OpenedHidePuzzles: number[] = [];
-  IsOpenNextGroup: boolean = false;
+  IsOpenPreFinal: boolean = false;
+  IsOpenFinalStage: boolean = false;
+  FinishedGroups: number[] = [];
+  OpenedHints: {[pid: number]: number[]} = {}
 
   constructor(obj?: any){
     if(obj) Object.assign(this, obj);
@@ -311,6 +322,20 @@ class PidItem{
 
     constructor(obj?: any){
         if(obj) Object.assign(this, obj);
+    }
+    get tName(){
+      if (this.pid == 31) return "M1"
+      if (this.pid == 32) return "M2"
+      if (this.pid == 33) return "M3"
+      if (this.pid == 34) return "MM"
+      if (this.pid == 35) return "M4"
+      if (this.pid == 36) return "M5"
+      if (this.pid == 37) return "M6"
+      if (this.pid == 38) return "M7"
+      if (this.pid == 39) return "M8"
+      if (this.pid == 40) return "FM"
+
+      return this.pid;
     }
 }
 

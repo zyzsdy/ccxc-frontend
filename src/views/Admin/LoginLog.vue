@@ -164,6 +164,9 @@ export default class LoginLogView extends Vue {
             case 3: return "#206af3";
             case 4: return "#206af3";
             case 5: return "#f5a52e";
+            case 6: return "#3af73a";
+            case 7: return "#f73939";
+            case 8: return "#206af3";
             default: return "#cccccc";
         }
     }
@@ -223,6 +226,18 @@ class UserList{
         {
             status: 5,
             label: "无权限"
+        },
+        {
+            status: 6,
+            label: "二次验证成功"
+        },
+        {
+            status: 7,
+            label: "二次验证无Ticket"
+        },
+        {
+            status: 8,
+            label: "二次验证失败"
         }
     ];
 

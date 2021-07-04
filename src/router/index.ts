@@ -89,6 +89,11 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/Announcement.vue')
   },
   {
+    path: '/userbackend/tempanno',
+    name: 'TempAnnoAdmin',
+    component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/TempAnno.vue')
+  },
+  {
     path: '/userbackend/user',
     name: 'UserAdmin',
     component: () => import(/* webpackChunkName: "userbackend-editor" */ '../views/Admin/UserAdmin.vue')

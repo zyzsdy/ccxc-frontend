@@ -35,6 +35,7 @@ export default class HomeView extends Vue {
   endTimestamp: number = 1628251200000;
   async mounted(){
     this.startCountdown();
+    this.checkReg();
 
     let api = this.$gConst.apiRoot + "/get-default-setting";
     let res = await fetchPost(api, {});
@@ -57,6 +58,17 @@ export default class HomeView extends Vue {
     while(this.$route.path == '/'){
       this.countdown = formatCountdown(this.endTimestamp);
       await sleep(1000);
+    }
+  }
+  async checkReg(){
+    if (localStorage.getItem('roleid') == "1"){
+      this.$confirm("您还没有报名，前往个人中心报名吧。（请注意单人参赛也要建立队伍）", "提示", {
+        confirmButtonText: "去个人中心",
+        cancelButtonText: "关闭",
+        type: "info"
+      }).then(() => {
+        this.$router.push('/myprofile');
+      });
     }
   }
   isLogin(){
