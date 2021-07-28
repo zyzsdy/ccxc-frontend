@@ -59,6 +59,11 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/ForgetPass.vue')
   },
   {
+    path: '/resetpass',
+    name: 'ResetPass',
+    component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/ResetPass.vue')
+  },
+  {
     path: '/myprofile',
     name: 'MyProfile',
     component: () => import(/* webpackChunkName: "userAction" */ '../views/UserArea/MyProfile.vue')

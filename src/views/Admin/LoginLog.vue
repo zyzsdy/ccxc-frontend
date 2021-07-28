@@ -238,6 +238,14 @@ class UserList{
         {
             status: 8,
             label: "二次验证失败"
+        },
+        {
+            status: 9,
+            label: "发送重置密码邮件"
+        },
+        {
+            status: 10,
+            label: "重置密码"
         }
     ];
 
