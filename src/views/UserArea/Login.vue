@@ -15,6 +15,7 @@
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="submitForm()" :loading="loginloading">登录</el-button>
+                            <el-button type="text" @click="goForgetPass()">重置密码</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -87,6 +88,9 @@ export default class LoginView extends Vue {
             this.$gConst.globalBus.$emit("show-error", "您已登录。");
             this.$router.push("/");
         }
+    }
+    goForgetPass(){
+        this.$router.push("/forgetpass");
     }
 }
 
