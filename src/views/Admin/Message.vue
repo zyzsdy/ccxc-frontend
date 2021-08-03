@@ -101,7 +101,7 @@
             <el-drawer title="消息预览" :visible.sync="messagePreview" direction="rtl">
                 <div class="message-side-preview">
                     <el-button type="success" @click="setReply">回复</el-button>
-                    <el-button type="primary" @click="setPenalty">增加罚时</el-button>
+                    <!--<el-button type="primary" @click="setPenalty">增加罚时</el-button>-->
                     <div v-html="messagePreviewHtml"></div>
                 </div>
             </el-drawer>
@@ -230,7 +230,10 @@ export default class MessageAdminView extends Vue {
                 type: "success",
                 message: "标记已读成功"
             });
-            this.$gConst.globalBus.$emit("reload");
+
+            let f = this.messageList.find(it => it.mid == mid);
+            if (f) f.is_read = 1;
+            //this.$gConst.globalBus.$emit("reload");
         } else {
             defaultApiErrorAction(this, data);
         }

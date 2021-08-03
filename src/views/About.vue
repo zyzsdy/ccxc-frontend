@@ -11,7 +11,6 @@
         </p>
         <p>以完赛时间作为排名依据，时间越短排名越高。若时间相同，则按解出的题目数量排名。</p>
         <p>开赛时间：2021年8月6日 20:00</p>
-        <p>请注意开赛时间可能随时调整，请关注网站公告。</p>
         <hr>
         <p>注意事项：</p>
         <ul>
@@ -26,9 +25,10 @@
           在报名截止日期前，您可以自由编辑您的组队信息、增删队员或是退出组队。但是您不能放弃您注册的账号并注册新账号，
           这将被视为同时在多个队伍中报名而取消您的成绩。
         </p>
-        <p>报名截止时间：2021年8月6日 19:00（比赛正式开始一小时前停止报名）</p>
-        <p>请注意报名截止时间可能随时调整，请关注网站公告。</p>
+        <p>报名截止时间：2021年8月6日 19:00（比赛正式开始前一小时停止报名）</p>
         <p>CCBC 11出题组保留对未尽事宜的最终解释权。如有疑问请联系Email: info@cipherpuzzles.com</p>
+        <p>请关注本网站公告或微信公众号【密码菌】（使用微信扫描下方二维码）随时获得最新消息。</p>
+        <el-image :src="imgUrl" style="height:250px; width:250px;"></el-image>
       </el-col>
     </el-row>
   </div>
@@ -44,5 +44,6 @@ import TopNavbar from '@/components/TopNavbar.vue'
   }
 })
 export default class AboutView extends Vue {
+  imgUrl = require('@/assets/qrcode_mimajun.png')
 }
 </script>
