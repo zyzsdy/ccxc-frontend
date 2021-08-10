@@ -3,8 +3,11 @@
     <TopNavbar activeIndex="/"></TopNavbar>
     <el-row>
       <el-col :sm="24" :md="{span: 12, offset: 6}">
-        <div class="title-logo" v-if="isFinishCountdown" @click="startGame">
-          START
+        <div v-if="isFinishCountdown">
+          <div class="title-logo"  @click="startGame">
+            START
+          </div>
+          <a v-if="jumpLink != ''" :href="jumpLink" target="_blank" class="baklink">如果自动跳转失败，请点击此链接。</a>
         </div>
         <div v-else>
           <div class="countdown hidden-sm-and-down">{{countdown}}</div>
@@ -33,6 +36,7 @@ import { fetchPost, fetchPostWithSign, defaultApiErrorAction } from '@/utils/fet
 export default class HomeView extends Vue {
   countdown: string = "0d 00:00:00";
   endTimestamp: number = 1628251200000;
+  jumpLink: string = "";
   async mounted(){
     this.startCountdown();
     this.checkReg();
@@ -97,22 +101,30 @@ export default class HomeView extends Vue {
     if(data['status'] == 1){
       let dest = this.$gConst.puzzleRoot + `/start?letter=${data["ticket"]}`;
 
+      this.jumpLink = dest;
       window.open(dest, "_blank");
 
-      // if(localStorage.getItem("prologue") == "o"){
-      //   this.$router.push('/puzzlegrouplist');
-      // }else{
-      //   this.$router.push('/prologue');
-      // }
+      this.delayRemoveJumpLink();
       
     }else{
       defaultApiErrorAction(this, data);
     }
   }
+  async delayRemoveJumpLink(){
+    await sleep(40000);
+    this.jumpLink = "";
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.baklink{
+  margin-top: 55px;
+  text-align: center;
+  font-size: 40px;
+  width: 100%;
+  display: block;
+}
 .title-logo{
   margin-top: 100px;
   margin-left: 20px;
