@@ -18,8 +18,6 @@ class GlobalConst implements PluginObject<never>{
         vue.prototype.$gConst = {
             apiRoot: "https://api.ccbc11.test/api/v1",
             puzzleRoot: "https://puzzle.ccbc11.test:3000",
-            //apiRoot: "https://apiv2.cipherpuzzles.com/api/v1",
-            //puzzleRoot: "https://c11-puzzle.cipherpuzzles.com",
             globalBus: new Vue()
         }
     }
